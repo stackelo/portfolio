@@ -1,0 +1,2136 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Angelo Stackelo</title>
+<meta name="description" content="Angelo Stackelo builds Android apps and the infrastructure they run on.">
+<meta name="author" content="Angelo Stackelo">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#ffffff">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Angelo Stackelo">
+<meta property="og:description" content="Android apps and the infrastructure they run on.">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%236d28d9'/%3E%3Cpath d='M10 23l6-14 6 14M12.4 18h7.2' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+:root {
+  --bg: #fff;
+  --fg: #17151f;
+  --muted: #5f5b6b;
+  --subtle: #75717f;
+  --line: #ebe9f0;
+  --line-strong: #d6d2df;
+  --accent: #6d28d9;
+  --accent-hover: #5b21b6;
+  --tint: #f6f3fe;
+  --ring: rgba(109, 40, 217, .14);
+
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --mono: ui-monospace, "SF Mono", "Cascadia Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+
+  --track: -0.011em;
+  --track-lg: -0.032em;
+  --w: 72rem;
+  --gutter: clamp(1.25rem, 5vw, 3rem);
+  --label: 12rem;
+}
+
+:lang(ar), :lang(fa), :lang(zh), :lang(ja), :lang(ko), :lang(th), :lang(ml) {
+  --track: 0;
+  --track-lg: 0;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+@media (min-width: 80rem) { html { font-size: 106.25%; } }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 400 1rem/1.65 var(--sans);
+  letter-spacing: var(--track);
+  font-feature-settings: "kern", "calt";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, p, ol, ul, dl, dd { margin: 0; }
+ol, ul { padding: 0; list-style: none; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; }
+::selection { background: var(--accent); color: #fff; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+
+:lang(ko) { word-break: keep-all; }
+:lang(ja) { line-break: strict; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+.skip {
+  position: absolute; z-index: 100; top: -4rem; inset-inline-start: 1rem;
+  padding: .5rem .8rem; border-radius: 6px;
+  background: var(--fg); color: #fff; font-size: .875rem;
+  transition: top .15s ease;
+}
+.skip:focus { top: 1rem; }
+
+.wrap {
+  max-width: var(--w);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.mono { font-family: var(--mono); letter-spacing: 0; }
+
+.u {
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: .25em;
+  transition: color .15s ease, text-decoration-color .15s ease;
+}
+.u:hover { color: var(--accent); text-decoration-color: currentColor; }
+
+.arr { color: var(--subtle); font-size: .85em; margin-inline-start: .15em; }
+
+/* header */
+
+.hd {
+  position: sticky; top: 0; z-index: 20;
+  background: rgba(255, 255, 255, .9);
+  -webkit-backdrop-filter: saturate(180%) blur(10px);
+  backdrop-filter: saturate(180%) blur(10px);
+  border-bottom: 1px solid transparent;
+  transition: border-color .2s ease;
+}
+.hd.is-stuck { border-bottom-color: var(--line); }
+
+.bar {
+  display: flex; align-items: center; gap: 1rem 1.5rem;
+  min-height: 3.75rem;
+}
+
+.brand {
+  display: inline-flex; align-items: center; gap: .6rem;
+  font-weight: 600; letter-spacing: var(--track-lg);
+  white-space: nowrap;
+}
+.brand svg { flex: none; }
+
+.nav { margin-inline-start: auto; }
+.nav ul { display: flex; gap: .125rem; }
+.nav a {
+  display: block; padding: .375rem .625rem; border-radius: 6px;
+  color: var(--muted); font-size: .875rem; white-space: nowrap;
+  transition: color .15s ease, background-color .15s ease;
+}
+.nav a:hover { color: var(--fg); background: var(--tint); }
+.nav a[aria-current="true"] { color: var(--accent); }
+
+/* language picker */
+
+.lang { position: relative; }
+
+.lang-btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  height: 2.25rem; padding-inline: .7rem .6rem;
+  border: 1px solid var(--line); border-radius: 8px;
+  background: #fff; cursor: pointer;
+  font-size: .8125rem; letter-spacing: 0;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.lang-btn:hover { border-color: var(--line-strong); }
+.lang-btn[aria-expanded="true"] { border-color: var(--accent); box-shadow: 0 0 0 3px var(--ring); }
+.lang-btn:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--ring); }
+.lang-btn .g { color: var(--muted); flex: none; }
+.lang-btn .cur { max-width: 9.5rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lang-btn .chev { color: var(--subtle); flex: none; transition: transform .15s ease; }
+.lang-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
+
+.lang-pop {
+  position: absolute; z-index: 30;
+  top: calc(100% + .5rem); inset-inline-end: 0;
+  width: min(28rem, calc(100vw - 2.5rem));
+  padding: .375rem;
+  background: #fff;
+  border: 1px solid var(--line); border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(23, 21, 31, .04), 0 16px 40px -12px rgba(23, 21, 31, .18);
+  opacity: 0; visibility: hidden;
+  transform: translateY(-4px) scale(.985);
+  transform-origin: top right;
+  transition: opacity .14s ease, transform .14s ease, visibility 0s linear .14s;
+}
+[dir="rtl"] .lang-pop { transform-origin: top left; }
+.lang[data-open] .lang-pop {
+  opacity: 1; visibility: visible; transform: none;
+  transition: opacity .14s ease, transform .14s ease, visibility 0s;
+}
+
+.lang-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: .5rem .625rem .375rem;
+  font: 500 .6875rem/1.4 var(--mono);
+  letter-spacing: .06em; text-transform: uppercase;
+  color: var(--subtle);
+}
+
+.lang-list {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px .25rem;
+  max-height: min(29rem, calc(100vh - 9rem));
+  overflow-y: auto; overscroll-behavior: contain;
+  scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent;
+}
+
+.lang-list [role="option"] {
+  display: flex; align-items: center; gap: .75rem;
+  min-height: 2.125rem; padding: .3125rem .625rem;
+  border-radius: 7px;
+  font-size: .875rem; line-height: 1.35; letter-spacing: 0;
+  cursor: pointer; outline: none;
+  transition: background-color .1s ease;
+}
+.lang-list [role="option"]:hover,
+.lang-list [role="option"]:focus { background: var(--tint); }
+.lang-list [role="option"]:focus-visible { box-shadow: inset 0 0 0 1.5px var(--accent); }
+.lang-list .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; unicode-bidi: isolate; }
+.lang-list .cd { font: .6875rem/1 var(--mono); color: var(--subtle); letter-spacing: .02em; }
+.lang-list .ck { display: none; color: var(--accent); flex: none; }
+.lang-list [aria-selected="true"] { color: var(--accent); font-weight: 500; }
+.lang-list [aria-selected="true"] .cd { display: none; }
+.lang-list [aria-selected="true"] .ck { display: block; }
+
+.lang-list li:first-child { grid-column: 1 / -1; position: relative; margin-bottom: .375rem; }
+.lang-list li:first-child::after {
+  content: ""; position: absolute; inset-inline: .625rem; bottom: -.25rem;
+  border-bottom: 1px solid var(--line);
+}
+
+@media (max-width: 34rem) {
+  .lang-list .cd { display: none; }
+  .lang-btn .cur { max-width: 7.5rem; }
+}
+
+@media (max-width: 47.99rem) {
+  .bar { flex-wrap: wrap; padding-block: .625rem; row-gap: .5rem; }
+  .lang { margin-inline-start: auto; }
+  .nav {
+    order: 3; flex-basis: 100%; margin-inline: -.625rem;
+    overflow-x: auto; scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+}
+
+/* hero */
+
+.hero { padding-block: clamp(4.5rem, 13vw, 9.5rem) clamp(3.5rem, 8vw, 6rem); }
+
+.eyebrow { display: flex; flex-wrap: wrap; align-items: baseline; gap: .1rem .5rem; font-size: .8125rem; color: var(--subtle); }
+.eyebrow .sep { color: var(--line-strong); }
+
+h1 {
+  margin-top: 1.25rem;
+  max-width: 14em;
+  font-size: clamp(2.125rem, 5.4vw, 4.125rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: var(--track-lg);
+  text-wrap: balance;
+}
+:lang(zh) h1, :lang(ja) h1, :lang(ko) h1 { line-height: 1.22; max-width: 16em; }
+:lang(th) h1, :lang(ml) h1, :lang(ar) h1, :lang(fa) h1 { line-height: 1.35; }
+
+.lede {
+  margin-top: 1.5rem; max-width: 34em;
+  color: var(--muted);
+  font-size: clamp(1.0625rem, 1.5vw, 1.1875rem);
+  text-wrap: pretty;
+}
+
+.actions {
+  display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.5rem;
+  margin-top: 2.25rem;
+}
+
+.btn {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .625rem 1rem; border-radius: 8px;
+  background: var(--accent); color: #fff;
+  font-weight: 500; font-size: .9375rem;
+  transition: background-color .15s ease, transform .15s ease;
+}
+.btn:hover { background: var(--accent-hover); }
+.btn:active { transform: translateY(1px); }
+.btn .arr { color: rgba(255, 255, 255, .7); }
+
+.status {
+  display: inline-flex; align-items: center; gap: .55rem;
+  margin-top: 2.5rem;
+  font-size: .8125rem; color: var(--muted);
+}
+.status i {
+  width: .45rem; height: .45rem; border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 .2rem var(--ring);
+}
+
+/* sections */
+
+.sec .grid {
+  display: grid;
+  grid-template-columns: var(--label) minmax(0, 1fr);
+  column-gap: 3rem;
+  padding-block: clamp(3rem, 7vw, 5rem);
+  position: relative;
+}
+.sec .grid::before {
+  content: "";
+  position: absolute; top: 0; inset-inline: var(--gutter);
+  border-top: 1px solid var(--line);
+}
+
+.label {
+  align-self: start;
+  position: sticky; top: 5.5rem;
+  display: flex; gap: .75rem;
+  font: 500 .75rem/1.9 var(--mono);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--subtle);
+}
+.label .n { color: var(--accent); }
+
+@media (max-width: 55.99rem) {
+  .sec .grid { grid-template-columns: minmax(0, 1fr); row-gap: 1.5rem; }
+  .label { position: static; }
+}
+
+.p { max-width: 38em; color: var(--muted); text-wrap: pretty; }
+.p + * { margin-top: 2rem; }
+
+.big {
+  max-width: 24em;
+  font-size: clamp(1.375rem, 2.6vw, 1.875rem);
+  line-height: 1.3; letter-spacing: var(--track-lg);
+  text-wrap: balance;
+}
+.big + * { margin-top: 2.5rem; }
+
+/* discord invite */
+
+.invite {
+  display: flex; align-items: center; gap: 1rem;
+  max-width: 30rem;
+  padding: .875rem .875rem .875rem 1rem;
+  border: 1px solid var(--line); border-radius: 12px;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+[dir="rtl"] .invite { padding: .875rem 1rem .875rem .875rem; }
+.invite:hover {
+  border-color: var(--line-strong);
+  box-shadow: 0 1px 2px rgba(23, 21, 31, .04), 0 10px 28px -14px rgba(109, 40, 217, .35);
+}
+.inv-ic {
+  flex: none; display: grid; place-items: center;
+  width: 2.75rem; height: 2.75rem; border-radius: 10px;
+  background: var(--accent); color: #fff;
+}
+.inv-txt { display: flex; flex-direction: column; min-width: 0; line-height: 1.35; }
+.inv-txt b { font-weight: 600; }
+.inv-txt small { color: var(--muted); font-size: .875rem; }
+.inv-cta {
+  flex: none; margin-inline-start: auto;
+  padding: .45rem .85rem; border-radius: 7px;
+  background: var(--accent); color: #fff;
+  font-size: .875rem; font-weight: 500;
+  transition: background-color .15s ease;
+}
+.invite:hover .inv-cta { background: var(--accent-hover); }
+
+/* company */
+
+.cols {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem;
+  counter-reset: s;
+}
+.cols li { padding-top: 1rem; border-top: 1px solid var(--fg); counter-increment: s; }
+.cols li::before {
+  content: counter(s, decimal-leading-zero);
+  display: block; margin-bottom: .75rem;
+  font: .75rem var(--mono); color: var(--accent);
+}
+.cols h3 { font-size: 1rem; font-weight: 600; letter-spacing: var(--track); }
+.cols p { margin-top: .375rem; color: var(--muted); font-size: .9375rem; }
+
+@media (max-width: 47.99rem) { .cols { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; } }
+
+/* spec lists */
+
+.spec { border-top: 1px solid var(--line); }
+.spec > div {
+  display: grid; grid-template-columns: 11rem minmax(0, 1fr); column-gap: 1.5rem;
+  padding-block: .875rem;
+  border-bottom: 1px solid var(--line);
+}
+.spec dt {
+  font: .75rem/1.9 var(--mono); letter-spacing: .02em;
+  color: var(--subtle); text-transform: uppercase;
+}
+.spec dd { overflow-wrap: anywhere; }
+
+@media (max-width: 30rem) {
+  .spec > div { grid-template-columns: minmax(0, 1fr); row-gap: .125rem; }
+}
+
+.copy {
+  margin-inline-start: .75rem; padding: .125rem .5rem;
+  border: 1px solid var(--line); border-radius: 5px; background: #fff;
+  font-size: .75rem; color: var(--muted); cursor: pointer;
+  transition: border-color .15s ease, color .15s ease;
+}
+.copy:hover { border-color: var(--line-strong); color: var(--fg); }
+.copy[data-done] { color: var(--accent); border-color: currentColor; }
+
+/* about */
+
+.sub { margin: 3rem 0 1rem; font-size: .9375rem; font-weight: 600; letter-spacing: var(--track); }
+.p + .sub { margin-top: 3rem; }
+
+.edu li, .tl li {
+  display: grid; column-gap: 1rem;
+  border-bottom: 1px solid var(--line);
+}
+.edu li:first-child, .tl li:first-child { border-top: 1px solid var(--line); }
+
+.edu li { grid-template-columns: 7.5rem minmax(0, 1fr); padding-block: 1rem; }
+.edu b { display: block; font-weight: 600; }
+.edu .d { display: block; margin-top: .125rem; color: var(--muted); font-size: .9375rem; }
+
+.tl li { grid-template-columns: 7.5rem minmax(0, 1fr); padding-block: .75rem; }
+
+.edu time, .tl time {
+  font: .875rem/1.65 var(--mono); color: var(--accent);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.edu time { padding-top: .0625rem; }
+
+@media (max-width: 30rem) {
+  .edu li { grid-template-columns: minmax(0, 1fr); row-gap: .25rem; }
+  .tl li { grid-template-columns: 4.5rem minmax(0, 1fr); }
+}
+
+/* footer */
+
+.ft {
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: .75rem 2rem;
+  padding-block: 2rem calc(3rem + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--line);
+  font-size: .8125rem; color: var(--subtle);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition: none !important; }
+}
+
+@media print {
+  .hd, .skip, .copy { display: none; }
+  .label { position: static; }
+  .sec .grid { padding-block: 1.5rem; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main" data-t="skip">Skip to content</a>
+
+<header class="hd" id="top">
+  <div class="wrap bar">
+    <a class="brand" href="#top">
+      <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#6d28d9"/><path d="M10 23l6-14 6 14M12.4 18h7.2" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Angelo Stackelo
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <ul>
+        <li><a href="#work" data-t="work">Work</a></li>
+        <li><a href="#company" data-t="company">Company</a></li>
+        <li><a href="#lab" data-t="lab">Lab</a></li>
+        <li><a href="#about" data-t="about">About</a></li>
+        <li><a href="#contact" data-t="contact">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="lang" id="lang">
+      <button class="lang-btn" id="lang-btn" type="button" aria-haspopup="listbox" aria-expanded="false" aria-controls="lang-list">
+        <svg class="g" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true"><circle cx="8" cy="8" r="6.25"/><path d="M1.75 8h12.5M8 1.75c1.8 1.9 2.6 4 2.6 6.25S9.8 12.35 8 14.25C6.2 12.35 5.4 10.25 5.4 8S6.2 3.65 8 1.75z"/></svg>
+        <span class="cur" id="lang-cur">English</span>
+        <svg class="chev" width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="lang-pop">
+        <div class="lang-head"><span data-t="lang">Language</span><span id="lang-count"></span></div>
+        <ul class="lang-list" id="lang-list" role="listbox" aria-labelledby="lang-btn"></ul>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="hero wrap" aria-labelledby="h">
+    <p class="eyebrow"><span class="mono" dir="ltr">@stackelo</span><span class="sep" aria-hidden="true">/</span><span data-t="role">Android developer &amp; sysadmin</span></p>
+    <h1 id="h" data-t="h1">I build Android apps and the infrastructure they run on.</h1>
+    <p class="lede" data-t="lede">I'm 19, studying IT and networks, and I run my own small IT company. I design apps for large screens, host my own servers and automate whatever I can.</p>
+    <div class="actions">
+      <a class="btn" href="https://discord.gg/6xknEG68Ec" target="_blank" rel="noopener">Discord<span class="arr" aria-hidden="true">↗</span></a>
+      <a class="u" href="https://github.com/stackelo" target="_blank" rel="noopener">GitHub</a>
+      <a class="u" href="https://www.reddit.com/user/Stackelo/" target="_blank" rel="noopener">Reddit</a>
+    </div>
+    <p class="status"><i aria-hidden="true"></i><span data-t="avail">Open to collaborations</span></p>
+  </section>
+
+  <section class="sec" id="work" aria-labelledby="t-work">
+    <div class="wrap grid">
+      <h2 class="label" id="t-work"><span class="n">01</span><span data-t="work">Work</span></h2>
+      <div>
+        <p class="big" data-t="workp">Every project I build is released on my Discord server, together with builds, updates and changelogs.</p>
+        <a class="invite" href="https://discord.gg/6xknEG68Ec" target="_blank" rel="noopener">
+          <span class="inv-ic" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.32 4.37A19.8 19.8 0 0 0 15.4 2.85l-.24.48a18.3 18.3 0 0 0-6.32 0l-.24-.48a19.7 19.7 0 0 0-4.92 1.52C.6 9.05-.25 13.6.17 18.1a19.9 19.9 0 0 0 6.03 3.04l1-1.62c-.55-.2-1.07-.46-1.57-.75l.38-.3a14.2 14.2 0 0 0 11.98 0l.38.3c-.5.3-1.03.55-1.58.75l1 1.62a19.8 19.8 0 0 0 6.04-3.04c.5-5.2-.84-9.72-3.51-13.73ZM8.52 15.33c-1.18 0-2.15-1.08-2.15-2.42s.95-2.42 2.15-2.42 2.17 1.09 2.15 2.42c0 1.34-.95 2.42-2.15 2.42Zm6.96 0c-1.18 0-2.15-1.08-2.15-2.42s.95-2.42 2.15-2.42 2.17 1.09 2.15 2.42c0 1.34-.95 2.42-2.15 2.42Z"/></svg></span>
+          <span class="inv-txt"><b>Stackelo</b><small data-t="inv">Releases, betas and updates</small></span>
+          <span class="inv-cta" data-t="join">Join</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="company" aria-labelledby="t-company">
+    <div class="wrap grid">
+      <h2 class="label" id="t-company"><span class="n">02</span><span data-t="company">Company</span></h2>
+      <div>
+        <p class="p" data-t="co">Alongside my studies, I run my own small IT company. It focuses on three things.</p>
+        <ol class="cols">
+          <li><h3 data-t="s1t">Android apps</h3><p data-t="s1d">Custom apps for phones, foldables and tablets.</p></li>
+          <li><h3 data-t="s2t">Infrastructure</h3><p data-t="s2d">Proxmox servers, self-hosted services and secure remote access.</p></li>
+          <li><h3 data-t="s3t">Automation</h3><p data-t="s3d">Scripts and workflows that take repetitive work off your hands.</p></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="lab" aria-labelledby="t-lab">
+    <div class="wrap grid">
+      <h2 class="label" id="t-lab"><span class="n">03</span><span data-t="lab">Lab</span></h2>
+      <div>
+        <p class="p" data-t="labp">Everything runs on a small Proxmox server at home, reachable only through a private network.</p>
+        <dl class="spec">
+          <div><dt data-t="l1">Hypervisor</dt><dd>Proxmox VE</dd></div>
+          <div><dt data-t="l2">Media</dt><dd>Jellyfin</dd></div>
+          <div><dt data-t="l3">Music</dt><dd>Navidrome</dd></div>
+          <div><dt data-t="l4">Builds</dt><dd data-t="v4">Dedicated Android build VM</dd></div>
+          <div><dt data-t="l5">Remote access</dt><dd>Tailscale</dd></div>
+          <div><dt data-t="l6">Backups</dt><dd data-t="v6">Scheduled snapshots</dd></div>
+          <div><dt data-t="l7">Tools</dt><dd>Kotlin, Jetpack Compose, Capacitor, Docker, LXC, Git, Claude Code</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="about" aria-labelledby="t-about">
+    <div class="wrap grid">
+      <h2 class="label" id="t-about"><span class="n">04</span><span data-t="about">About</span></h2>
+      <div>
+        <p class="p" data-t="aboutp">I got my first PC at twelve, took it apart, and never really stopped. I'm now in the second year of a two-year IT and networks diploma, and I spend the rest of my time building things I actually use.</p>
+
+        <h3 class="sub" data-t="edu">Education</h3>
+        <ol class="edu">
+          <li><time datetime="2025/2027">2025 – 2027</time><div><b data-t="e1">BTS CIEL, IT &amp; Networks</b><span class="d" data-t="e1d">Two-year national higher technician diploma. Second year, in progress.</span></div></li>
+          <li><time datetime="2025">2025</time><div><b data-t="e2">Baccalauréat STI2D, Digital Systems</b><span class="d" data-t="e2d">Engineering and technology track. Passed with honours.</span></div></li>
+          <li><time datetime="2027">2027</time><div><b data-t="e3">Bachelor's in networks &amp; security</b><span class="d" data-t="e3d">Planned after the BTS.</span></div></li>
+        </ol>
+
+        <h3 class="sub" data-t="ms">Milestones</h3>
+        <ol class="tl">
+          <li><time datetime="2019">2019</time><span data-t="y1">First PC, first scripts</span></li>
+          <li><time datetime="2022">2022</time><span data-t="y2">Joined the tech community on Discord</span></li>
+          <li><time datetime="2023">2023</time><span data-t="y3">First Proxmox homelab</span></li>
+          <li><time datetime="2024">2024</time><span data-t="y4">First Android app</span></li>
+          <li><time datetime="2026">2026</time><span data-t="y5">Started my own IT company</span></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="contact" aria-labelledby="t-contact">
+    <div class="wrap grid">
+      <h2 class="label" id="t-contact"><span class="n">05</span><span data-t="contact">Contact</span></h2>
+      <div>
+        <p class="big" data-t="cp">The fastest way to reach me is Discord. Projects, betas and updates are all posted on my server.</p>
+        <dl class="spec">
+          <div><dt data-t="k1">Server</dt><dd><a class="u" href="https://discord.gg/6xknEG68Ec" target="_blank" rel="noopener">discord.gg/6xknEG68Ec</a><span class="arr" aria-hidden="true">↗</span></dd></div>
+          <div><dt data-t="k2">Direct message</dt><dd><span class="mono">angecode</span><button class="copy" type="button" data-copy="angecode" data-t="copy">Copy</button></dd></div>
+          <div><dt data-t="k3">Source code</dt><dd><a class="u" href="https://github.com/stackelo" target="_blank" rel="noopener">github.com/stackelo</a><span class="arr" aria-hidden="true">↗</span></dd></div>
+          <div><dt data-t="k4">Posts</dt><dd><a class="u" href="https://www.reddit.com/user/Stackelo/" target="_blank" rel="noopener">reddit.com/u/Stackelo</a><span class="arr" aria-hidden="true">↗</span></dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <div class="ft">
+    <span>© <span id="yr">2026</span> Angelo Stackelo</span>
+    <a class="u" href="#top" data-t="top">Back to top</a>
+  </div>
+</footer>
+
+<script>
+const I18N = {
+  "en": {
+    meta: "Angelo Stackelo builds Android apps and the infrastructure they run on.",
+    skip: "Skip to content",
+    work: "Work",
+    company: "Company",
+    lab: "Lab",
+    about: "About",
+    contact: "Contact",
+    lang: "Language",
+    avail: "Open to collaborations",
+    role: "Android developer & sysadmin",
+    h1: "I build Android apps and the infrastructure they run on.",
+    lede: "I'm 19, studying IT and networks, and I run my own small IT company. I design apps for large screens, host my own servers and automate whatever I can.",
+    workp: "Every project I build is released on my Discord server, together with builds, updates and changelogs.",
+    inv: "Releases, betas and updates",
+    join: "Join",
+    co: "Alongside my studies, I run my own small IT company. It focuses on three things.",
+    s1t: "Android apps",
+    s1d: "Custom apps for phones, foldables and tablets.",
+    s2t: "Infrastructure",
+    s2d: "Proxmox servers, self-hosted services and secure remote access.",
+    s3t: "Automation",
+    s3d: "Scripts and workflows that take repetitive work off your hands.",
+    labp: "Everything runs on a small Proxmox server at home, reachable only through a private network.",
+    l1: "Hypervisor",
+    l2: "Media",
+    l3: "Music",
+    l4: "Builds",
+    l5: "Remote access",
+    l6: "Backups",
+    l7: "Tools",
+    v4: "Dedicated Android build VM",
+    v6: "Scheduled snapshots",
+    aboutp: "I got my first PC at twelve, took it apart, and never really stopped. I'm now in the second year of a two-year IT and networks diploma, and I spend the rest of my time building things I actually use.",
+    edu: "Education",
+    e1: "BTS CIEL, IT & Networks",
+    e1d: "Two-year national higher technician diploma. Second year, in progress.",
+    e2: "Baccalauréat STI2D, Digital Systems",
+    e2d: "Engineering and technology track. Passed with honours.",
+    e3: "Bachelor's in networks & security",
+    e3d: "Planned after the BTS.",
+    ms: "Milestones",
+    y1: "First PC, first scripts",
+    y2: "Joined the tech community on Discord",
+    y3: "First Proxmox homelab",
+    y4: "First Android app",
+    y5: "Started my own IT company",
+    cp: "The fastest way to reach me is Discord. Projects, betas and updates are all posted on my server.",
+    k1: "Server",
+    k2: "Direct message",
+    k3: "Source code",
+    k4: "Posts",
+    copy: "Copy",
+    copied: "Copied",
+    top: "Back to top"
+  },
+  "zh-CN": {
+    meta: "Angelo Stackelo 开发 Android 应用，以及支撑它们运行的基础设施。",
+    skip: "跳到正文",
+    work: "作品",
+    company: "公司",
+    lab: "实验室",
+    about: "关于",
+    contact: "联系",
+    lang: "语言",
+    avail: "欢迎合作",
+    role: "Android 开发者 & 系统管理员",
+    h1: "我开发 Android 应用，以及支撑它们运行的基础设施。",
+    lede: "我 19 岁，在读 IT 与网络专业，同时经营着一家自己的小型 IT 公司。我为大屏设备设计应用，自己托管服务器，能自动化的都自动化。",
+    workp: "我做的每个项目都会发布在我的 Discord 服务器上，附带安装包、更新和更新日志。",
+    inv: "发布、测试版和更新",
+    join: "加入",
+    co: "在学业之外，我经营着一家自己的小型 IT 公司，专注于三件事。",
+    s1t: "Android 应用",
+    s1d: "为手机、折叠屏和平板定制开发应用。",
+    s2t: "基础设施",
+    s2d: "Proxmox 服务器、自托管服务和安全的远程访问。",
+    s3t: "自动化",
+    s3d: "用脚本和工作流替你完成重复劳动。",
+    labp: "所有服务都运行在家里的一台小型 Proxmox 服务器上，只能通过私有网络访问。",
+    l1: "虚拟化平台",
+    l2: "影音",
+    l3: "音乐",
+    l4: "构建",
+    l5: "远程访问",
+    l6: "备份",
+    l7: "工具",
+    v4: "专用于 Android 构建的虚拟机",
+    v6: "定时快照",
+    aboutp: "十二岁拿到第一台电脑，当天就把它拆了，从那以后就再没停下来。现在我在读两年制 IT 与网络专业的第二年，其余时间都在做我自己真正会用的东西。",
+    edu: "教育背景",
+    e1: "BTS CIEL，IT 与网络方向",
+    e1d: "法国两年制国家高级技术员文凭，第二年在读。",
+    e2: "Baccalauréat STI2D，数字系统方向",
+    e2d: "工程与技术方向，以优良成绩通过。",
+    e3: "网络与安全方向学士",
+    e3d: "计划在 BTS 之后攻读。",
+    ms: "里程碑",
+    y1: "第一台电脑，第一个脚本",
+    y2: "加入 Discord 上的技术社区",
+    y3: "第一个 Proxmox 家庭实验室",
+    y4: "第一个 Android 应用",
+    y5: "创办自己的 IT 公司",
+    cp: "联系我最快的方式是 Discord。项目、测试版和更新都发布在我的服务器上。",
+    k1: "服务器",
+    k2: "私信",
+    k3: "源代码",
+    k4: "帖子",
+    copy: "复制",
+    copied: "已复制",
+    top: "返回顶部"
+  },
+  "zh-TW": {
+    meta: "Angelo Stackelo 開發 Android 應用程式，以及支撐它們運作的基礎架構。",
+    skip: "跳至主要內容",
+    work: "作品",
+    company: "公司",
+    lab: "實驗室",
+    about: "關於",
+    contact: "聯絡",
+    lang: "語言",
+    avail: "歡迎合作",
+    role: "Android 開發者 & 系統管理員",
+    h1: "我開發 Android 應用程式，以及支撐它們運作的基礎架構。",
+    lede: "我 19 歲，主修 IT 與網路，同時經營一間自己的小型 IT 公司。我為大螢幕裝置設計 App，自己架設伺服器，能自動化的都自動化。",
+    workp: "我做的每個專案都會發布在我的 Discord 伺服器上，並附上安裝檔、更新與更新日誌。",
+    inv: "發布、測試版與更新",
+    join: "加入",
+    co: "在課業之外，我經營一間自己的小型 IT 公司，專注於三件事。",
+    s1t: "Android 應用程式",
+    s1d: "為手機、摺疊機與平板量身打造的 App。",
+    s2t: "基礎架構",
+    s2d: "Proxmox 伺服器、自架服務與安全的遠端存取。",
+    s3t: "自動化",
+    s3d: "用腳本與工作流程替你處理重複性工作。",
+    labp: "所有服務都跑在家裡一台小型 Proxmox 伺服器上，只能透過私人網路存取。",
+    l1: "虛擬化平台",
+    l2: "影音",
+    l3: "音樂",
+    l4: "建置",
+    l5: "遠端存取",
+    l6: "備份",
+    l7: "工具",
+    v4: "專供 Android 建置的虛擬機",
+    v6: "排程快照",
+    aboutp: "十二歲拿到第一台電腦，馬上就把它拆開，從此再也沒停下來。現在我就讀兩年制 IT 與網路課程的第二年，其餘時間都在做我自己真正會用的東西。",
+    edu: "學歷",
+    e1: "BTS CIEL，IT 與網路",
+    e1d: "法國兩年制國家高級技術員文憑，第二年就讀中。",
+    e2: "Baccalauréat STI2D，數位系統",
+    e2d: "工程與科技組，以優等成績通過。",
+    e3: "網路與資安學士",
+    e3d: "預計在 BTS 之後就讀。",
+    ms: "里程碑",
+    y1: "第一台電腦，第一個腳本",
+    y2: "加入 Discord 上的科技社群",
+    y3: "第一個 Proxmox 家用實驗室",
+    y4: "第一個 Android App",
+    y5: "創立自己的 IT 公司",
+    cp: "聯絡我最快的方式是 Discord。專案、測試版與更新都發布在我的伺服器上。",
+    k1: "伺服器",
+    k2: "私訊",
+    k3: "原始碼",
+    k4: "貼文",
+    copy: "複製",
+    copied: "已複製",
+    top: "回到頂端"
+  },
+  "ja": {
+    meta: "Angelo Stackelo は Android アプリと、それを動かすインフラを作っています。",
+    skip: "本文へスキップ",
+    work: "制作物",
+    company: "会社",
+    lab: "ラボ",
+    about: "プロフィール",
+    contact: "連絡先",
+    lang: "言語",
+    avail: "コラボ歓迎",
+    role: "Android 開発者 & システム管理者",
+    h1: "Android アプリと、それを動かすインフラを作っています。",
+    lede: "19 歳。IT とネットワークを学びながら、自分の小さな IT 会社を経営しています。大画面向けのアプリを設計し、自分のサーバーを運用し、自動化できることはすべて自動化しています。",
+    workp: "作ったプロジェクトはすべて、ビルド、アップデート、変更履歴とともに私の Discord サーバーで公開しています。",
+    inv: "リリース、ベータ版、アップデート",
+    join: "参加する",
+    co: "学業と並行して、自分の小さな IT 会社を経営しています。取り組んでいるのは次の三つです。",
+    s1t: "Android アプリ",
+    s1d: "スマートフォン、折りたたみ端末、タブレット向けのオーダーメイドアプリ。",
+    s2t: "インフラ",
+    s2d: "Proxmox サーバー、セルフホストのサービス、安全なリモートアクセス。",
+    s3t: "自動化",
+    s3d: "繰り返し作業をなくすスクリプトとワークフロー。",
+    labp: "すべて自宅の小さな Proxmox サーバーで動いていて、プライベートネットワーク経由でしかアクセスできません。",
+    l1: "ハイパーバイザー",
+    l2: "メディア",
+    l3: "音楽",
+    l4: "ビルド",
+    l5: "リモートアクセス",
+    l6: "バックアップ",
+    l7: "ツール",
+    v4: "Android ビルド専用の VM",
+    v6: "定期スナップショット",
+    aboutp: "12 歳で初めての PC を手に入れ、すぐに分解して以来、ずっと手を動かし続けています。今は 2 年制の IT・ネットワーク課程の 2 年目で、それ以外の時間は自分が本当に使うものを作っています。",
+    edu: "学歴",
+    e1: "BTS CIEL（IT・ネットワーク）",
+    e1d: "フランスの 2 年制国家上級技術者資格。現在 2 年目。",
+    e2: "Baccalauréat STI2D（デジタルシステム）",
+    e2d: "工学・テクノロジー系。優秀な成績で合格。",
+    e3: "ネットワーク・セキュリティ学士",
+    e3d: "BTS 修了後に進学予定。",
+    ms: "これまでの歩み",
+    y1: "初めての PC と初めてのスクリプト",
+    y2: "Discord のテックコミュニティに参加",
+    y3: "初めての Proxmox ホームラボ",
+    y4: "初めての Android アプリ",
+    y5: "自分の IT 会社を設立",
+    cp: "いちばん早い連絡手段は Discord です。プロジェクト、ベータ版、アップデートはすべて私のサーバーで公開しています。",
+    k1: "サーバー",
+    k2: "ダイレクトメッセージ",
+    k3: "ソースコード",
+    k4: "投稿",
+    copy: "コピー",
+    copied: "コピーしました",
+    top: "ページの先頭へ"
+  },
+  "ko": {
+    meta: "Angelo Stackelo는 Android 앱과 그 앱이 돌아가는 인프라를 만듭니다.",
+    skip: "본문으로 건너뛰기",
+    work: "작업",
+    company: "회사",
+    lab: "랩",
+    about: "소개",
+    contact: "연락처",
+    lang: "언어",
+    avail: "협업 환영",
+    role: "Android 개발자 & 시스템 관리자",
+    h1: "Android 앱과 그 앱이 돌아가는 인프라를 만듭니다.",
+    lede: "19살이고, IT와 네트워크를 공부하면서 작은 IT 회사를 직접 운영하고 있습니다. 대화면용 앱을 설계하고, 직접 서버를 호스팅하며, 자동화할 수 있는 건 모두 자동화합니다.",
+    workp: "제가 만드는 모든 프로젝트는 빌드, 업데이트, 변경 내역과 함께 제 Discord 서버에 공개됩니다.",
+    inv: "릴리스, 베타, 업데이트",
+    join: "참여하기",
+    co: "학업과 함께 작은 IT 회사를 직접 운영하고 있습니다. 세 가지에 집중합니다.",
+    s1t: "Android 앱",
+    s1d: "스마트폰, 폴더블, 태블릿을 위한 맞춤형 앱.",
+    s2t: "인프라",
+    s2d: "Proxmox 서버, 셀프 호스팅 서비스, 안전한 원격 접속.",
+    s3t: "자동화",
+    s3d: "반복 작업을 없애 주는 스크립트와 워크플로.",
+    labp: "모든 것이 집에 있는 작은 Proxmox 서버에서 돌아가며, 사설 네트워크로만 접속할 수 있습니다.",
+    l1: "하이퍼바이저",
+    l2: "미디어",
+    l3: "음악",
+    l4: "빌드",
+    l5: "원격 접속",
+    l6: "백업",
+    l7: "도구",
+    v4: "Android 빌드 전용 VM",
+    v6: "예약 스냅샷",
+    aboutp: "열두 살에 첫 PC를 받자마자 분해했고, 그 뒤로 한 번도 멈춘 적이 없습니다. 지금은 2년제 IT·네트워크 과정 2학년이고, 나머지 시간에는 제가 실제로 쓰는 것들을 만듭니다.",
+    edu: "학력",
+    e1: "BTS CIEL, IT·네트워크",
+    e1d: "프랑스 2년제 국가 고등기술자 학위. 2학년 재학 중.",
+    e2: "Baccalauréat STI2D, 디지털 시스템",
+    e2d: "공학·기술 계열. 우수한 성적으로 합격.",
+    e3: "네트워크·보안 학사",
+    e3d: "BTS 이후 진학 예정.",
+    ms: "주요 이정표",
+    y1: "첫 PC, 첫 스크립트",
+    y2: "Discord 기술 커뮤니티 합류",
+    y3: "첫 Proxmox 홈랩",
+    y4: "첫 Android 앱",
+    y5: "나만의 IT 회사 창업",
+    cp: "가장 빠른 연락 방법은 Discord입니다. 프로젝트, 베타, 업데이트는 모두 제 서버에 올라옵니다.",
+    k1: "서버",
+    k2: "개인 메시지",
+    k3: "소스 코드",
+    k4: "게시물",
+    copy: "복사",
+    copied: "복사됨",
+    top: "맨 위로"
+  },
+  "tr": {
+    meta: "Angelo Stackelo, Android uygulamaları ve bunların çalıştığı altyapıyı geliştiriyor.",
+    skip: "İçeriğe geç",
+    work: "Projeler",
+    company: "Şirket",
+    lab: "Lab",
+    about: "Hakkımda",
+    contact: "İletişim",
+    lang: "Dil",
+    avail: "İş birliklerine açığım",
+    role: "Android geliştirici & sistem yöneticisi",
+    h1: "Android uygulamaları ve onların çalıştığı altyapıyı geliştiriyorum.",
+    lede: "19 yaşındayım, bilişim ve ağlar okuyorum ve kendi küçük bilişim şirketimi yönetiyorum. Büyük ekranlar için uygulamalar tasarlıyor, kendi sunucularımı barındırıyor ve otomatikleştirebildiğim her şeyi otomatikleştiriyorum.",
+    workp: "Geliştirdiğim her proje, sürümleri, güncellemeleri ve değişiklik notlarıyla birlikte Discord sunucumda yayınlanıyor.",
+    inv: "Sürümler, betalar ve güncellemeler",
+    join: "Katıl",
+    co: "Okulun yanı sıra kendi küçük bilişim şirketimi yönetiyorum. Şirket üç konuya odaklanıyor.",
+    s1t: "Android uygulamaları",
+    s1d: "Telefonlar, katlanabilir cihazlar ve tabletler için özel uygulamalar.",
+    s2t: "Altyapı",
+    s2d: "Proxmox sunucuları, self-hosted hizmetler ve güvenli uzaktan erişim.",
+    s3t: "Otomasyon",
+    s3d: "Tekrarlayan işleri ortadan kaldıran betikler ve iş akışları.",
+    labp: "Her şey evdeki küçük bir Proxmox sunucusunda çalışıyor ve yalnızca özel bir ağ üzerinden erişilebiliyor.",
+    l1: "Hipervizör",
+    l2: "Medya",
+    l3: "Müzik",
+    l4: "Derlemeler",
+    l5: "Uzaktan erişim",
+    l6: "Yedekler",
+    l7: "Araçlar",
+    v4: "Android derlemelerine ayrılmış VM",
+    v6: "Zamanlanmış anlık görüntüler",
+    aboutp: "İlk bilgisayarım on iki yaşımda geldi, hemen söküp parçalarına ayırdım ve o günden beri hiç durmadım. Şu an iki yıllık bilişim ve ağlar programının ikinci yılındayım; kalan zamanımda gerçekten kullandığım şeyler geliştiriyorum.",
+    edu: "Eğitim",
+    e1: "BTS CIEL, Bilişim ve Ağlar",
+    e1d: "Fransa'da iki yıllık ulusal yüksek teknisyen diploması. İkinci yıl, devam ediyor.",
+    e2: "Baccalauréat STI2D, Dijital Sistemler",
+    e2d: "Mühendislik ve teknoloji alanı. Dereceyle tamamlandı.",
+    e3: "Ağlar ve güvenlik lisansı",
+    e3d: "BTS'nin ardından planlanıyor.",
+    ms: "Dönüm noktaları",
+    y1: "İlk PC, ilk betikler",
+    y2: "Discord'daki teknoloji topluluğuna katılım",
+    y3: "İlk Proxmox homelab",
+    y4: "İlk Android uygulaması",
+    y5: "Kendi bilişim şirketimin kuruluşu",
+    cp: "Bana en hızlı Discord üzerinden ulaşabilirsiniz. Projeler, betalar ve güncellemeler sunucumda paylaşılıyor.",
+    k1: "Sunucu",
+    k2: "Özel mesaj",
+    k3: "Kaynak kod",
+    k4: "Gönderiler",
+    copy: "Kopyala",
+    copied: "Kopyalandı",
+    top: "Başa dön"
+  },
+  "ru": {
+    meta: "Angelo Stackelo создаёт Android-приложения и инфраструктуру, на которой они работают.",
+    skip: "Перейти к содержимому",
+    work: "Проекты",
+    company: "Компания",
+    lab: "Лаборатория",
+    about: "Обо мне",
+    contact: "Контакты",
+    lang: "Язык",
+    avail: "Открыт к сотрудничеству",
+    role: "Android-разработчик и сисадмин",
+    h1: "Я создаю Android-приложения и инфраструктуру, на которой они работают.",
+    lede: "Мне 19, я учусь на IT и сети и веду собственную небольшую IT-компанию. Делаю приложения для больших экранов, держу свои серверы и автоматизирую всё, что получается.",
+    workp: "Все мои проекты выходят на моём Discord-сервере вместе со сборками, обновлениями и списками изменений.",
+    inv: "Релизы, беты и обновления",
+    join: "Вступить",
+    co: "Параллельно с учёбой я веду собственную небольшую IT-компанию. Она занимается тремя вещами.",
+    s1t: "Android-приложения",
+    s1d: "Приложения на заказ для смартфонов, складных устройств и планшетов.",
+    s2t: "Инфраструктура",
+    s2d: "Серверы Proxmox, self-hosted сервисы и безопасный удалённый доступ.",
+    s3t: "Автоматизация",
+    s3d: "Скрипты и процессы, которые избавляют от рутины.",
+    labp: "Всё работает на небольшом сервере Proxmox дома, доступном только через частную сеть.",
+    l1: "Гипервизор",
+    l2: "Медиа",
+    l3: "Музыка",
+    l4: "Сборки",
+    l5: "Удалённый доступ",
+    l6: "Резервные копии",
+    l7: "Инструменты",
+    v4: "Отдельная VM для сборок Android",
+    v6: "Снапшоты по расписанию",
+    aboutp: "Первый компьютер у меня появился в двенадцать, я сразу его разобрал и с тех пор так и не остановился. Сейчас я на втором курсе двухлетней программы по IT и сетям, а всё остальное время делаю то, чем сам пользуюсь.",
+    edu: "Образование",
+    e1: "BTS CIEL, IT и сети",
+    e1d: "Двухлетний государственный диплом старшего техника (Франция). Второй курс.",
+    e2: "Baccalauréat STI2D, цифровые системы",
+    e2d: "Инженерно-технологический профиль. Сдан с отличием.",
+    e3: "Бакалавриат по сетям и безопасности",
+    e3d: "В планах после BTS.",
+    ms: "Вехи",
+    y1: "Первый ПК, первые скрипты",
+    y2: "Пришёл в tech-сообщество в Discord",
+    y3: "Первый хоумлаб на Proxmox",
+    y4: "Первое Android-приложение",
+    y5: "Открыл собственную IT-компанию",
+    cp: "Быстрее всего со мной связаться в Discord. Проекты, беты и обновления публикуются на моём сервере.",
+    k1: "Сервер",
+    k2: "Личные сообщения",
+    k3: "Исходный код",
+    k4: "Посты",
+    copy: "Копировать",
+    copied: "Скопировано",
+    top: "Наверх"
+  },
+  "vi": {
+    meta: "Angelo Stackelo xây dựng ứng dụng Android và hạ tầng để chúng vận hành.",
+    skip: "Chuyển đến nội dung",
+    work: "Dự án",
+    company: "Công ty",
+    lab: "Lab",
+    about: "Giới thiệu",
+    contact: "Liên hệ",
+    lang: "Ngôn ngữ",
+    avail: "Sẵn sàng hợp tác",
+    role: "Lập trình viên Android & quản trị hệ thống",
+    h1: "Tôi xây dựng ứng dụng Android và hạ tầng để chúng vận hành.",
+    lede: "Tôi 19 tuổi, đang học CNTT và mạng, đồng thời điều hành một công ty CNTT nhỏ của riêng mình. Tôi thiết kế ứng dụng cho màn hình lớn, tự vận hành máy chủ và tự động hóa mọi thứ có thể.",
+    workp: "Mọi dự án tôi làm đều được phát hành trên máy chủ Discord của tôi, kèm bản dựng, bản cập nhật và nhật ký thay đổi.",
+    inv: "Bản phát hành, bản beta và cập nhật",
+    join: "Tham gia",
+    co: "Song song với việc học, tôi điều hành một công ty CNTT nhỏ của riêng mình, tập trung vào ba việc.",
+    s1t: "Ứng dụng Android",
+    s1d: "Ứng dụng theo yêu cầu cho điện thoại, máy gập và máy tính bảng.",
+    s2t: "Hạ tầng",
+    s2d: "Máy chủ Proxmox, dịch vụ tự lưu trữ và truy cập từ xa an toàn.",
+    s3t: "Tự động hóa",
+    s3d: "Script và quy trình giúp loại bỏ công việc lặp lại.",
+    labp: "Mọi thứ chạy trên một máy chủ Proxmox nhỏ tại nhà, chỉ truy cập được qua mạng riêng.",
+    l1: "Hypervisor",
+    l2: "Đa phương tiện",
+    l3: "Âm nhạc",
+    l4: "Bản dựng",
+    l5: "Truy cập từ xa",
+    l6: "Sao lưu",
+    l7: "Công cụ",
+    v4: "VM riêng để build Android",
+    v6: "Snapshot theo lịch",
+    aboutp: "Tôi có chiếc PC đầu tiên năm mười hai tuổi, tháo tung nó ra và từ đó chưa bao giờ dừng lại. Hiện tôi đang học năm hai của chương trình CNTT và mạng hai năm, thời gian còn lại tôi xây dựng những thứ mình thực sự dùng.",
+    edu: "Học vấn",
+    e1: "BTS CIEL, CNTT & Mạng",
+    e1d: "Bằng kỹ thuật viên cao cấp quốc gia hai năm của Pháp. Đang học năm hai.",
+    e2: "Baccalauréat STI2D, Hệ thống số",
+    e2d: "Ban kỹ thuật và công nghệ. Đỗ loại giỏi.",
+    e3: "Cử nhân mạng & bảo mật",
+    e3d: "Dự định sau BTS.",
+    ms: "Cột mốc",
+    y1: "PC đầu tiên, script đầu tiên",
+    y2: "Tham gia cộng đồng công nghệ trên Discord",
+    y3: "Homelab Proxmox đầu tiên",
+    y4: "Ứng dụng Android đầu tiên",
+    y5: "Thành lập công ty CNTT của riêng mình",
+    cp: "Cách nhanh nhất để liên hệ với tôi là qua Discord. Dự án, bản beta và bản cập nhật đều được đăng trên máy chủ của tôi.",
+    k1: "Máy chủ",
+    k2: "Tin nhắn riêng",
+    k3: "Mã nguồn",
+    k4: "Bài đăng",
+    copy: "Sao chép",
+    copied: "Đã sao chép",
+    top: "Lên đầu trang"
+  },
+  "th": {
+    meta: "Angelo Stackelo พัฒนาแอป Android และโครงสร้างพื้นฐานที่แอปเหล่านั้นทำงานอยู่",
+    skip: "ข้ามไปยังเนื้อหา",
+    work: "ผลงาน",
+    company: "บริษัท",
+    lab: "แล็บ",
+    about: "เกี่ยวกับ",
+    contact: "ติดต่อ",
+    lang: "ภาษา",
+    avail: "เปิดรับการร่วมงาน",
+    role: "นักพัฒนา Android และผู้ดูแลระบบ",
+    h1: "ผมพัฒนาแอป Android และโครงสร้างพื้นฐานที่แอปเหล่านั้นทำงานอยู่",
+    lede: "ผมอายุ 19 ปี กำลังเรียนด้านไอทีและเครือข่าย และบริหารบริษัทไอทีเล็กๆ ของตัวเอง ผมออกแบบแอปสำหรับหน้าจอขนาดใหญ่ โฮสต์เซิร์ฟเวอร์ของตัวเอง และทำทุกอย่างให้เป็นอัตโนมัติเท่าที่ทำได้",
+    workp: "ทุกโปรเจกต์ที่ผมสร้างจะเผยแพร่บนเซิร์ฟเวอร์ Discord ของผม พร้อมไฟล์บิลด์ อัปเดต และบันทึกการเปลี่ยนแปลง",
+    inv: "รีลีส เวอร์ชันเบต้า และอัปเดต",
+    join: "เข้าร่วม",
+    co: "นอกจากการเรียน ผมยังบริหารบริษัทไอทีเล็กๆ ของตัวเอง โดยเน้นอยู่สามเรื่อง",
+    s1t: "แอป Android",
+    s1d: "แอปสั่งทำสำหรับโทรศัพท์ อุปกรณ์จอพับ และแท็บเล็ต",
+    s2t: "โครงสร้างพื้นฐาน",
+    s2d: "เซิร์ฟเวอร์ Proxmox บริการที่โฮสต์เอง และการเข้าถึงระยะไกลที่ปลอดภัย",
+    s3t: "ระบบอัตโนมัติ",
+    s3d: "สคริปต์และเวิร์กโฟลว์ที่ช่วยกำจัดงานซ้ำซาก",
+    labp: "ทุกอย่างทำงานบนเซิร์ฟเวอร์ Proxmox ขนาดเล็กที่บ้าน และเข้าถึงได้ผ่านเครือข่ายส่วนตัวเท่านั้น",
+    l1: "ไฮเปอร์ไวเซอร์",
+    l2: "มีเดีย",
+    l3: "เพลง",
+    l4: "บิลด์",
+    l5: "การเข้าถึงระยะไกล",
+    l6: "การสำรองข้อมูล",
+    l7: "เครื่องมือ",
+    v4: "VM สำหรับบิลด์ Android โดยเฉพาะ",
+    v6: "สแนปช็อตตามกำหนดเวลา",
+    aboutp: "ผมได้ PC เครื่องแรกตอนอายุสิบสอง แกะมันออกทันที และไม่เคยหยุดอีกเลยตั้งแต่นั้น ตอนนี้ผมเรียนอยู่ปีสองของหลักสูตรไอทีและเครือข่ายสองปี เวลาที่เหลือผมใช้สร้างสิ่งที่ผมใช้จริง",
+    edu: "การศึกษา",
+    e1: "BTS CIEL สาขาไอทีและเครือข่าย",
+    e1d: "ประกาศนียบัตรช่างเทคนิคชั้นสูงระดับชาติของฝรั่งเศส หลักสูตรสองปี กำลังเรียนปีสอง",
+    e2: "Baccalauréat STI2D สาขาระบบดิจิทัล",
+    e2d: "สายวิศวกรรมและเทคโนโลยี สอบผ่านด้วยผลการเรียนดีมาก",
+    e3: "ปริญญาตรีด้านเครือข่ายและความปลอดภัย",
+    e3d: "วางแผนเรียนต่อหลังจบ BTS",
+    ms: "เส้นทางที่ผ่านมา",
+    y1: "PC เครื่องแรก สคริปต์แรก",
+    y2: "เข้าร่วมชุมชนเทคบน Discord",
+    y3: "โฮมแล็บ Proxmox แรก",
+    y4: "แอป Android แรก",
+    y5: "ก่อตั้งบริษัทไอทีของตัวเอง",
+    cp: "ช่องทางที่ติดต่อผมได้เร็วที่สุดคือ Discord โปรเจกต์ เวอร์ชันเบต้า และอัปเดตทั้งหมดโพสต์อยู่บนเซิร์ฟเวอร์ของผม",
+    k1: "เซิร์ฟเวอร์",
+    k2: "ข้อความส่วนตัว",
+    k3: "ซอร์สโค้ด",
+    k4: "โพสต์",
+    copy: "คัดลอก",
+    copied: "คัดลอกแล้ว",
+    top: "กลับขึ้นด้านบน"
+  },
+  "de": {
+    meta: "Angelo Stackelo entwickelt Android-Apps und die Infrastruktur, auf der sie laufen.",
+    skip: "Zum Inhalt springen",
+    work: "Projekte",
+    company: "Firma",
+    lab: "Lab",
+    about: "Über mich",
+    contact: "Kontakt",
+    lang: "Sprache",
+    avail: "Offen für Zusammenarbeit",
+    role: "Android-Entwickler & Sysadmin",
+    h1: "Ich entwickle Android-Apps und die Infrastruktur, auf der sie laufen.",
+    lede: "Ich bin 19, studiere IT und Netzwerke und führe meine eigene kleine IT-Firma. Ich gestalte Apps für große Bildschirme, hoste meine eigenen Server und automatisiere, was sich automatisieren lässt.",
+    workp: "Jedes Projekt, das ich baue, erscheint auf meinem Discord-Server, zusammen mit Builds, Updates und Changelogs.",
+    inv: "Releases, Betas und Updates",
+    join: "Beitreten",
+    co: "Neben dem Studium führe ich meine eigene kleine IT-Firma. Sie konzentriert sich auf drei Dinge.",
+    s1t: "Android-Apps",
+    s1d: "Individuelle Apps für Smartphones, Foldables und Tablets.",
+    s2t: "Infrastruktur",
+    s2d: "Proxmox-Server, selbst gehostete Dienste und sicherer Fernzugriff.",
+    s3t: "Automatisierung",
+    s3d: "Skripte und Workflows, die Ihnen wiederkehrende Arbeit abnehmen.",
+    labp: "Alles läuft auf einem kleinen Proxmox-Server zu Hause, erreichbar nur über ein privates Netzwerk.",
+    l1: "Hypervisor",
+    l2: "Medien",
+    l3: "Musik",
+    l4: "Builds",
+    l5: "Fernzugriff",
+    l6: "Backups",
+    l7: "Werkzeuge",
+    v4: "Eigene VM für Android-Builds",
+    v6: "Geplante Snapshots",
+    aboutp: "Mit zwölf bekam ich meinen ersten PC, habe ihn auseinandergenommen und eigentlich nie aufgehört. Jetzt bin ich im zweiten Jahr eines zweijährigen Studiengangs in IT und Netzwerken und verbringe den Rest meiner Zeit damit, Dinge zu bauen, die ich wirklich nutze.",
+    edu: "Ausbildung",
+    e1: "BTS CIEL, IT & Netzwerke",
+    e1d: "Zweijähriges staatliches Diplom für höhere Techniker (Frankreich). Zweites Jahr, laufend.",
+    e2: "Baccalauréat STI2D, Digitale Systeme",
+    e2d: "Technischer Zweig (Ingenieurwesen und Technologie). Mit Auszeichnung bestanden.",
+    e3: "Bachelor in Netzwerken & Sicherheit",
+    e3d: "Nach dem BTS geplant.",
+    ms: "Meilensteine",
+    y1: "Erster PC, erste Skripte",
+    y2: "Einstieg in die Tech-Community auf Discord",
+    y3: "Erstes Proxmox-Homelab",
+    y4: "Erste Android-App",
+    y5: "Gründung meiner eigenen IT-Firma",
+    cp: "Am schnellsten erreichen Sie mich über Discord. Projekte, Betas und Updates erscheinen alle auf meinem Server.",
+    k1: "Server",
+    k2: "Direktnachricht",
+    k3: "Quellcode",
+    k4: "Beiträge",
+    copy: "Kopieren",
+    copied: "Kopiert",
+    top: "Nach oben"
+  },
+  "es": {
+    meta: "Angelo Stackelo crea apps Android y la infraestructura en la que funcionan.",
+    skip: "Saltar al contenido",
+    work: "Proyectos",
+    company: "Empresa",
+    lab: "Lab",
+    about: "Sobre mí",
+    contact: "Contacto",
+    lang: "Idioma",
+    avail: "Abierto a colaboraciones",
+    role: "Desarrollador Android y administrador de sistemas",
+    h1: "Creo apps Android y la infraestructura en la que funcionan.",
+    lede: "Tengo 19 años, estudio informática y redes y dirijo mi propia pequeña empresa de informática. Diseño apps para pantallas grandes, alojo mis propios servidores y automatizo todo lo que puedo.",
+    workp: "Cada proyecto que creo se publica en mi servidor de Discord, junto con sus versiones, actualizaciones y notas de cambios.",
+    inv: "Lanzamientos, betas y actualizaciones",
+    join: "Unirse",
+    co: "Además de estudiar, dirijo mi propia pequeña empresa de informática. Se centra en tres cosas.",
+    s1t: "Apps Android",
+    s1d: "Apps a medida para móviles, plegables y tabletas.",
+    s2t: "Infraestructura",
+    s2d: "Servidores Proxmox, servicios autoalojados y acceso remoto seguro.",
+    s3t: "Automatización",
+    s3d: "Scripts y flujos de trabajo que eliminan las tareas repetitivas.",
+    labp: "Todo funciona en un pequeño servidor Proxmox en casa, accesible solo a través de una red privada.",
+    l1: "Hipervisor",
+    l2: "Multimedia",
+    l3: "Música",
+    l4: "Compilación",
+    l5: "Acceso remoto",
+    l6: "Copias de seguridad",
+    l7: "Herramientas",
+    v4: "VM dedicada a compilar Android",
+    v6: "Snapshots programados",
+    aboutp: "Tuve mi primer PC a los doce, lo desmonté y nunca he parado del todo. Ahora curso el segundo año de un diploma de dos años en informática y redes, y dedico el resto del tiempo a crear cosas que de verdad uso.",
+    edu: "Formación",
+    e1: "BTS CIEL, Informática y Redes",
+    e1d: "Diploma nacional de técnico superior de dos años (Francia). Segundo año, en curso.",
+    e2: "Baccalauréat STI2D, Sistemas Digitales",
+    e2d: "Rama de ingeniería y tecnología. Aprobado con mención.",
+    e3: "Grado en redes y seguridad",
+    e3d: "Previsto después del BTS.",
+    ms: "Hitos",
+    y1: "Primer PC, primeros scripts",
+    y2: "Llegada a la comunidad tech en Discord",
+    y3: "Primer homelab con Proxmox",
+    y4: "Primera app Android",
+    y5: "Creación de mi propia empresa de informática",
+    cp: "La forma más rápida de contactarme es Discord. Los proyectos, las betas y las actualizaciones se publican en mi servidor.",
+    k1: "Servidor",
+    k2: "Mensaje directo",
+    k3: "Código fuente",
+    k4: "Publicaciones",
+    copy: "Copiar",
+    copied: "Copiado",
+    top: "Volver arriba"
+  },
+  "fr": {
+    meta: "Angelo Stackelo conçoit des applications Android et l'infrastructure qui les fait tourner.",
+    skip: "Aller au contenu",
+    work: "Projets",
+    company: "Société",
+    lab: "Lab",
+    about: "À propos",
+    contact: "Contact",
+    lang: "Langue",
+    avail: "Ouvert aux collaborations",
+    role: "Développeur Android & administrateur système",
+    h1: "Je conçois des applications Android et l'infrastructure qui les fait tourner.",
+    lede: "J'ai 19 ans, j'étudie l'informatique et les réseaux, et je dirige ma propre petite société informatique. Je conçois des applis pour grands écrans, j'héberge mes propres serveurs et j'automatise tout ce que je peux.",
+    workp: "Chaque projet que je construis est publié sur mon serveur Discord, avec ses versions, ses mises à jour et ses notes de version.",
+    inv: "Versions, bêtas et mises à jour",
+    join: "Rejoindre",
+    co: "En parallèle de mes études, je dirige ma propre petite société informatique. Elle se concentre sur trois choses.",
+    s1t: "Applications Android",
+    s1d: "Applications sur mesure pour smartphones, pliables et tablettes.",
+    s2t: "Infrastructure",
+    s2d: "Serveurs Proxmox, services auto-hébergés et accès à distance sécurisé.",
+    s3t: "Automatisation",
+    s3d: "Scripts et workflows qui vous débarrassent des tâches répétitives.",
+    labp: "Tout tourne sur un petit serveur Proxmox à la maison, accessible uniquement via un réseau privé.",
+    l1: "Hyperviseur",
+    l2: "Médias",
+    l3: "Musique",
+    l4: "Compilation",
+    l5: "Accès distant",
+    l6: "Sauvegardes",
+    l7: "Outils",
+    v4: "VM dédiée à la compilation Android",
+    v6: "Snapshots planifiés",
+    aboutp: "J'ai eu mon premier PC à douze ans, je l'ai démonté, et je n'ai jamais vraiment arrêté. Je suis aujourd'hui en deuxième année d'un BTS en informatique et réseaux, et je passe le reste de mon temps à construire des outils que j'utilise vraiment.",
+    edu: "Formation",
+    e1: "BTS CIEL, option Informatique et Réseaux",
+    e1d: "Diplôme national de niveau bac+2. Deuxième année, en cours.",
+    e2: "Baccalauréat STI2D, spécialité SIN",
+    e2d: "Sciences et technologies de l'industrie et du développement durable. Mention Bien.",
+    e3: "Licence pro réseaux et sécurité",
+    e3d: "Prévue après le BTS.",
+    ms: "Étapes",
+    y1: "Premier PC, premiers scripts",
+    y2: "Arrivée dans la communauté tech sur Discord",
+    y3: "Premier homelab Proxmox",
+    y4: "Première application Android",
+    y5: "Création de ma société informatique",
+    cp: "Le plus rapide pour me joindre, c'est Discord. Les projets, les bêtas et les mises à jour sont publiés sur mon serveur.",
+    k1: "Serveur",
+    k2: "Message privé",
+    k3: "Code source",
+    k4: "Publications",
+    copy: "Copier",
+    copied: "Copié",
+    top: "Haut de page"
+  },
+  "uk": {
+    meta: "Angelo Stackelo створює Android-застосунки та інфраструктуру, на якій вони працюють.",
+    skip: "Перейти до вмісту",
+    work: "Проєкти",
+    company: "Компанія",
+    lab: "Лабораторія",
+    about: "Про мене",
+    contact: "Контакти",
+    lang: "Мова",
+    avail: "Відкритий до співпраці",
+    role: "Android-розробник і сисадмін",
+    h1: "Я створюю Android-застосунки та інфраструктуру, на якій вони працюють.",
+    lede: "Мені 19, я навчаюся на IT та мережах і веду власну невелику IT-компанію. Створюю застосунки для великих екранів, тримаю власні сервери й автоматизую все, що можу.",
+    workp: "Усі мої проєкти виходять на моєму Discord-сервері разом зі збірками, оновленнями та списками змін.",
+    inv: "Релізи, бети й оновлення",
+    join: "Приєднатися",
+    co: "Паралельно з навчанням я веду власну невелику IT-компанію. Вона займається трьома речами.",
+    s1t: "Android-застосунки",
+    s1d: "Застосунки на замовлення для смартфонів, складаних пристроїв і планшетів.",
+    s2t: "Інфраструктура",
+    s2d: "Сервери Proxmox, self-hosted сервіси та безпечний віддалений доступ.",
+    s3t: "Автоматизація",
+    s3d: "Скрипти й процеси, що знімають рутинну роботу.",
+    labp: "Усе працює на невеликому сервері Proxmox удома, доступному лише через приватну мережу.",
+    l1: "Гіпервізор",
+    l2: "Медіа",
+    l3: "Музика",
+    l4: "Збірки",
+    l5: "Віддалений доступ",
+    l6: "Резервні копії",
+    l7: "Інструменти",
+    v4: "Окрема VM для збірок Android",
+    v6: "Знімки за розкладом",
+    aboutp: "Перший комп'ютер я отримав у дванадцять, одразу його розібрав і відтоді так і не зупинився. Зараз я на другому курсі дворічної програми з IT та мереж, а решту часу створюю речі, якими сам користуюся.",
+    edu: "Освіта",
+    e1: "BTS CIEL, IT та мережі",
+    e1d: "Дворічний державний диплом старшого техніка (Франція). Другий курс.",
+    e2: "Baccalauréat STI2D, цифрові системи",
+    e2d: "Інженерно-технологічний профіль. Складено з відзнакою.",
+    e3: "Бакалаврат із мереж і безпеки",
+    e3d: "У планах після BTS.",
+    ms: "Віхи",
+    y1: "Перший ПК, перші скрипти",
+    y2: "Прийшов у tech-спільноту в Discord",
+    y3: "Перший хоумлаб на Proxmox",
+    y4: "Перший Android-застосунок",
+    y5: "Заснував власну IT-компанію",
+    cp: "Найшвидше зі мною зв'язатися в Discord. Проєкти, бети й оновлення публікуються на моєму сервері.",
+    k1: "Сервер",
+    k2: "Особисті повідомлення",
+    k3: "Вихідний код",
+    k4: "Дописи",
+    copy: "Копіювати",
+    copied: "Скопійовано",
+    top: "Нагору"
+  },
+  "pl": {
+    meta: "Angelo Stackelo tworzy aplikacje na Androida i infrastrukturę, na której działają.",
+    skip: "Przejdź do treści",
+    work: "Projekty",
+    company: "Firma",
+    lab: "Lab",
+    about: "O mnie",
+    contact: "Kontakt",
+    lang: "Język",
+    avail: "Otwarty na współpracę",
+    role: "Programista Android i administrator systemów",
+    h1: "Tworzę aplikacje na Androida i infrastrukturę, na której działają.",
+    lede: "Mam 19 lat, studiuję informatykę i sieci i prowadzę własną małą firmę IT. Projektuję aplikacje na duże ekrany, hostuję własne serwery i automatyzuję wszystko, co się da.",
+    workp: "Każdy projekt, który tworzę, trafia na mój serwer Discord, razem z buildami, aktualizacjami i listami zmian.",
+    inv: "Wydania, bety i aktualizacje",
+    join: "Dołącz",
+    co: "Równolegle ze studiami prowadzę własną małą firmę IT. Skupia się na trzech rzeczach.",
+    s1t: "Aplikacje na Androida",
+    s1d: "Aplikacje na zamówienie na telefony, składaki i tablety.",
+    s2t: "Infrastruktura",
+    s2d: "Serwery Proxmox, usługi self-hosted i bezpieczny dostęp zdalny.",
+    s3t: "Automatyzacja",
+    s3d: "Skrypty i workflowy, które zdejmują z głowy powtarzalną pracę.",
+    labp: "Wszystko działa na małym serwerze Proxmox w domu, dostępnym tylko przez prywatną sieć.",
+    l1: "Hiperwizor",
+    l2: "Multimedia",
+    l3: "Muzyka",
+    l4: "Buildy",
+    l5: "Dostęp zdalny",
+    l6: "Kopie zapasowe",
+    l7: "Narzędzia",
+    v4: "Osobna VM do buildów Androida",
+    v6: "Zaplanowane snapshoty",
+    aboutp: "Pierwszy komputer dostałem w wieku dwunastu lat, rozebrałem go na części i w zasadzie nigdy nie przestałem. Jestem teraz na drugim roku dwuletniego kierunku z informatyki i sieci, a resztę czasu spędzam, budując rzeczy, których naprawdę używam.",
+    edu: "Wykształcenie",
+    e1: "BTS CIEL, informatyka i sieci",
+    e1d: "Dwuletni państwowy dyplom technika wyższego stopnia (Francja). Drugi rok, w trakcie.",
+    e2: "Baccalauréat STI2D, systemy cyfrowe",
+    e2d: "Profil inżynieryjno-technologiczny. Zdany z wyróżnieniem.",
+    e3: "Licencjat z sieci i bezpieczeństwa",
+    e3d: "Planowany po BTS.",
+    ms: "Kamienie milowe",
+    y1: "Pierwszy PC, pierwsze skrypty",
+    y2: "Dołączenie do społeczności tech na Discordzie",
+    y3: "Pierwszy homelab na Proxmoxie",
+    y4: "Pierwsza aplikacja na Androida",
+    y5: "Założenie własnej firmy IT",
+    cp: "Najszybciej złapiesz mnie na Discordzie. Projekty, bety i aktualizacje publikuję na moim serwerze.",
+    k1: "Serwer",
+    k2: "Wiadomość prywatna",
+    k3: "Kod źródłowy",
+    k4: "Posty",
+    copy: "Kopiuj",
+    copied: "Skopiowano",
+    top: "Do góry"
+  },
+  "pt-BR": {
+    meta: "Angelo Stackelo cria apps Android e a infraestrutura em que eles rodam.",
+    skip: "Pular para o conteúdo",
+    work: "Projetos",
+    company: "Empresa",
+    lab: "Lab",
+    about: "Sobre",
+    contact: "Contato",
+    lang: "Idioma",
+    avail: "Aberto a colaborações",
+    role: "Desenvolvedor Android e sysadmin",
+    h1: "Eu crio apps Android e a infraestrutura em que eles rodam.",
+    lede: "Tenho 19 anos, estudo TI e redes e tenho minha própria pequena empresa de TI. Desenvolvo apps para telas grandes, hospedo meus próprios servidores e automatizo tudo o que posso.",
+    workp: "Todo projeto que eu crio é lançado no meu servidor do Discord, com builds, atualizações e changelogs.",
+    inv: "Lançamentos, betas e atualizações",
+    join: "Entrar",
+    co: "Junto com os estudos, comando minha própria pequena empresa de TI. Ela foca em três coisas.",
+    s1t: "Apps Android",
+    s1d: "Apps sob medida para celulares, dobráveis e tablets.",
+    s2t: "Infraestrutura",
+    s2d: "Servidores Proxmox, serviços auto-hospedados e acesso remoto seguro.",
+    s3t: "Automação",
+    s3d: "Scripts e fluxos que eliminam o trabalho repetitivo.",
+    labp: "Tudo roda em um pequeno servidor Proxmox em casa, acessível apenas por uma rede privada.",
+    l1: "Hipervisor",
+    l2: "Mídia",
+    l3: "Música",
+    l4: "Builds",
+    l5: "Acesso remoto",
+    l6: "Backups",
+    l7: "Ferramentas",
+    v4: "VM dedicada a builds Android",
+    v6: "Snapshots agendados",
+    aboutp: "Ganhei meu primeiro PC aos doze, desmontei e nunca mais parei de verdade. Hoje estou no segundo ano de um curso de dois anos em TI e redes, e passo o resto do tempo criando coisas que eu realmente uso.",
+    edu: "Formação",
+    e1: "BTS CIEL, TI e Redes",
+    e1d: "Diploma nacional de técnico superior de dois anos (França). Segundo ano, em andamento.",
+    e2: "Baccalauréat STI2D, Sistemas Digitais",
+    e2d: "Área de engenharia e tecnologia. Aprovado com distinção.",
+    e3: "Bacharelado em redes e segurança",
+    e3d: "Previsto depois do BTS.",
+    ms: "Marcos",
+    y1: "Primeiro PC, primeiros scripts",
+    y2: "Entrada na comunidade tech no Discord",
+    y3: "Primeiro homelab Proxmox",
+    y4: "Primeiro app Android",
+    y5: "Fundação da minha empresa de TI",
+    cp: "O jeito mais rápido de falar comigo é pelo Discord. Projetos, betas e atualizações são publicados no meu servidor.",
+    k1: "Servidor",
+    k2: "Mensagem direta",
+    k3: "Código-fonte",
+    k4: "Posts",
+    copy: "Copiar",
+    copied: "Copiado",
+    top: "Voltar ao topo"
+  },
+  "ar": {
+    meta: "يطوّر Angelo Stackelo تطبيقات Android والبنية التحتية التي تعمل عليها.",
+    skip: "انتقل إلى المحتوى",
+    work: "الأعمال",
+    company: "الشركة",
+    lab: "المختبر",
+    about: "نبذة",
+    contact: "تواصل",
+    lang: "اللغة",
+    avail: "متاح للتعاون",
+    role: "مطوّر Android ومدير أنظمة",
+    h1: "أطوّر تطبيقات Android والبنية التحتية التي تعمل عليها.",
+    lede: "عمري 19 عامًا، أدرس تقنية المعلومات والشبكات، وأدير شركتي الصغيرة الخاصة في مجال المعلوماتية. أصمّم تطبيقات للشاشات الكبيرة، وأستضيف خوادمي بنفسي، وأؤتمت كل ما أستطيع.",
+    workp: "يُنشر كل مشروع أطوّره على خادمي في Discord، مع الإصدارات والتحديثات وسجلّات التغييرات.",
+    inv: "إصدارات ونسخ تجريبية وتحديثات",
+    join: "انضم",
+    co: "إلى جانب دراستي، أدير شركتي الصغيرة الخاصة في مجال المعلوماتية، وتركّز على ثلاثة أمور.",
+    s1t: "تطبيقات Android",
+    s1d: "تطبيقات مخصّصة للهواتف والأجهزة القابلة للطي والأجهزة اللوحية.",
+    s2t: "البنية التحتية",
+    s2d: "خوادم Proxmox وخدمات مستضافة ذاتيًا ووصول آمن عن بُعد.",
+    s3t: "الأتمتة",
+    s3d: "سكربتات وسير عمل تريحك من المهام المتكررة.",
+    labp: "كل شيء يعمل على خادم Proxmox صغير في المنزل، ولا يمكن الوصول إليه إلا عبر شبكة خاصة.",
+    l1: "المشرف الافتراضي",
+    l2: "الوسائط",
+    l3: "الموسيقى",
+    l4: "البناء",
+    l5: "الوصول عن بُعد",
+    l6: "النسخ الاحتياطي",
+    l7: "الأدوات",
+    v4: "آلة افتراضية مخصّصة لبناء تطبيقات Android",
+    v6: "لقطات مجدولة",
+    aboutp: "حصلت على أول حاسوب في الثانية عشرة، فككته فورًا، ولم أتوقف منذ ذلك الحين. أنا الآن في السنة الثانية من برنامج مدته عامان في تقنية المعلومات والشبكات، وأقضي بقية وقتي في بناء أشياء أستخدمها فعلًا.",
+    edu: "التعليم",
+    e1: "BTS CIEL، تقنية المعلومات والشبكات",
+    e1d: "شهادة وطنية فرنسية للتقني العالي مدتها عامان. السنة الثانية، قيد الدراسة.",
+    e2: "Baccalauréat STI2D، الأنظمة الرقمية",
+    e2d: "شعبة الهندسة والتكنولوجيا. نجاح بتقدير جيد جدًا.",
+    e3: "إجازة في الشبكات والأمن",
+    e3d: "مخطّط لها بعد BTS.",
+    ms: "محطات",
+    y1: "أول حاسوب وأول سكربتات",
+    y2: "الانضمام إلى مجتمع التقنية على Discord",
+    y3: "أول مختبر منزلي بـ Proxmox",
+    y4: "أول تطبيق Android",
+    y5: "تأسيس شركتي الخاصة في المعلوماتية",
+    cp: "أسرع طريقة للتواصل معي هي Discord. تُنشر المشاريع والنسخ التجريبية والتحديثات كلها على خادمي.",
+    k1: "الخادم",
+    k2: "رسالة خاصة",
+    k3: "الشيفرة المصدرية",
+    k4: "المنشورات",
+    copy: "نسخ",
+    copied: "تم النسخ",
+    top: "العودة إلى الأعلى"
+  },
+  "fa": {
+    meta: "Angelo Stackelo اپلیکیشن‌های Android و زیرساختی را که روی آن اجرا می‌شوند می‌سازد.",
+    skip: "رفتن به محتوا",
+    work: "پروژه‌ها",
+    company: "شرکت",
+    lab: "آزمایشگاه",
+    about: "درباره من",
+    contact: "تماس",
+    lang: "زبان",
+    avail: "آماده همکاری",
+    role: "توسعه‌دهنده Android و مدیر سیستم",
+    h1: "اپلیکیشن‌های Android و زیرساختی را که روی آن اجرا می‌شوند می‌سازم.",
+    lede: "۱۹ سال دارم، فناوری اطلاعات و شبکه می‌خوانم و شرکت کوچک IT خودم را اداره می‌کنم. برای صفحه‌نمایش‌های بزرگ اپ طراحی می‌کنم، سرورهای خودم را میزبانی می‌کنم و هر کاری را که بشود خودکار می‌کنم.",
+    workp: "هر پروژه‌ای که می‌سازم همراه با نسخه‌ها، به‌روزرسانی‌ها و فهرست تغییرات در سرور Discord من منتشر می‌شود.",
+    inv: "انتشارها، نسخه‌های بتا و به‌روزرسانی‌ها",
+    join: "پیوستن",
+    co: "در کنار تحصیل، شرکت کوچک IT خودم را اداره می‌کنم که روی سه چیز تمرکز دارد.",
+    s1t: "اپلیکیشن‌های Android",
+    s1d: "اپ‌های سفارشی برای گوشی، دستگاه‌های تاشو و تبلت.",
+    s2t: "زیرساخت",
+    s2d: "سرورهای Proxmox، سرویس‌های خودمیزبان و دسترسی امن از راه دور.",
+    s3t: "خودکارسازی",
+    s3d: "اسکریپت‌ها و گردش‌کارهایی که کارهای تکراری را حذف می‌کنند.",
+    labp: "همه‌چیز روی یک سرور کوچک Proxmox در خانه اجرا می‌شود و فقط از طریق یک شبکه خصوصی در دسترس است.",
+    l1: "هایپروایزر",
+    l2: "رسانه",
+    l3: "موسیقی",
+    l4: "بیلد",
+    l5: "دسترسی از راه دور",
+    l6: "پشتیبان‌گیری",
+    l7: "ابزارها",
+    v4: "ماشین مجازی مخصوص بیلد Android",
+    v6: "اسنپ‌شات‌های زمان‌بندی‌شده",
+    aboutp: "اولین کامپیوترم را در دوازده‌سالگی گرفتم، بلافاصله بازش کردم و از آن موقع هیچ‌وقت متوقف نشدم. الان سال دوم یک دوره دوساله فناوری اطلاعات و شبکه هستم و بقیه وقتم را صرف ساختن چیزهایی می‌کنم که واقعاً از آن‌ها استفاده می‌کنم.",
+    edu: "تحصیلات",
+    e1: "BTS CIEL، فناوری اطلاعات و شبکه",
+    e1d: "مدرک ملی تکنسین ارشد دوساله در فرانسه. سال دوم، در حال تحصیل.",
+    e2: "Baccalauréat STI2D، سیستم‌های دیجیتال",
+    e2d: "شاخه مهندسی و فناوری. قبولی با درجه عالی.",
+    e3: "کارشناسی شبکه و امنیت",
+    e3d: "برای بعد از BTS برنامه‌ریزی شده است.",
+    ms: "نقاط عطف",
+    y1: "اولین کامپیوتر، اولین اسکریپت‌ها",
+    y2: "پیوستن به جامعه فناوری در Discord",
+    y3: "اولین هوم‌لب با Proxmox",
+    y4: "اولین اپ Android",
+    y5: "تأسیس شرکت IT خودم",
+    cp: "سریع‌ترین راه تماس با من Discord است. پروژه‌ها، نسخه‌های بتا و به‌روزرسانی‌ها همه در سرور من منتشر می‌شوند.",
+    k1: "سرور",
+    k2: "پیام خصوصی",
+    k3: "کد منبع",
+    k4: "پست‌ها",
+    copy: "کپی",
+    copied: "کپی شد",
+    top: "بازگشت به بالا"
+  },
+  "id": {
+    meta: "Angelo Stackelo membangun aplikasi Android dan infrastruktur tempat aplikasi itu berjalan.",
+    skip: "Langsung ke konten",
+    work: "Proyek",
+    company: "Perusahaan",
+    lab: "Lab",
+    about: "Tentang",
+    contact: "Kontak",
+    lang: "Bahasa",
+    avail: "Terbuka untuk kolaborasi",
+    role: "Pengembang Android & sysadmin",
+    h1: "Saya membangun aplikasi Android dan infrastruktur tempat aplikasi itu berjalan.",
+    lede: "Saya berusia 19 tahun, kuliah di bidang TI dan jaringan, dan menjalankan perusahaan TI kecil milik saya sendiri. Saya merancang aplikasi untuk layar besar, meng-host server sendiri, dan mengotomatiskan apa pun yang bisa.",
+    workp: "Setiap proyek yang saya buat dirilis di server Discord saya, lengkap dengan build, pembaruan, dan catatan perubahan.",
+    inv: "Rilis, beta, dan pembaruan",
+    join: "Gabung",
+    co: "Di samping kuliah, saya menjalankan perusahaan TI kecil milik saya sendiri. Fokusnya ada pada tiga hal.",
+    s1t: "Aplikasi Android",
+    s1d: "Aplikasi khusus untuk ponsel, perangkat lipat, dan tablet.",
+    s2t: "Infrastruktur",
+    s2d: "Server Proxmox, layanan self-hosted, dan akses jarak jauh yang aman.",
+    s3t: "Otomasi",
+    s3d: "Skrip dan alur kerja yang menghilangkan pekerjaan berulang.",
+    labp: "Semuanya berjalan di server Proxmox kecil di rumah, hanya bisa diakses lewat jaringan privat.",
+    l1: "Hypervisor",
+    l2: "Media",
+    l3: "Musik",
+    l4: "Build",
+    l5: "Akses jarak jauh",
+    l6: "Cadangan",
+    l7: "Alat",
+    v4: "VM khusus untuk build Android",
+    v6: "Snapshot terjadwal",
+    aboutp: "Saya mendapat PC pertama di usia dua belas tahun, membongkarnya, dan sejak itu tidak pernah benar-benar berhenti. Sekarang saya di tahun kedua program dua tahun TI dan jaringan, dan sisa waktu saya habiskan untuk membuat hal-hal yang benar-benar saya pakai.",
+    edu: "Pendidikan",
+    e1: "BTS CIEL, TI & Jaringan",
+    e1d: "Diploma nasional teknisi tinggi dua tahun (Prancis). Tahun kedua, sedang berjalan.",
+    e2: "Baccalauréat STI2D, Sistem Digital",
+    e2d: "Jurusan teknik dan teknologi. Lulus dengan predikat sangat baik.",
+    e3: "Sarjana jaringan & keamanan",
+    e3d: "Direncanakan setelah BTS.",
+    ms: "Tonggak",
+    y1: "PC pertama, skrip pertama",
+    y2: "Bergabung dengan komunitas teknologi di Discord",
+    y3: "Homelab Proxmox pertama",
+    y4: "Aplikasi Android pertama",
+    y5: "Mendirikan perusahaan TI sendiri",
+    cp: "Cara tercepat menghubungi saya adalah lewat Discord. Proyek, versi beta, dan pembaruan semuanya diunggah di server saya.",
+    k1: "Server",
+    k2: "Pesan langsung",
+    k3: "Kode sumber",
+    k4: "Postingan",
+    copy: "Salin",
+    copied: "Tersalin",
+    top: "Kembali ke atas"
+  },
+  "it": {
+    meta: "Angelo Stackelo sviluppa app Android e l'infrastruttura su cui girano.",
+    skip: "Vai al contenuto",
+    work: "Progetti",
+    company: "Azienda",
+    lab: "Lab",
+    about: "Chi sono",
+    contact: "Contatti",
+    lang: "Lingua",
+    avail: "Disponibile per collaborazioni",
+    role: "Sviluppatore Android & sysadmin",
+    h1: "Sviluppo app Android e l'infrastruttura su cui girano.",
+    lede: "Ho 19 anni, studio informatica e reti e gestisco una mia piccola azienda informatica. Progetto app per schermi grandi, ospito i miei server e automatizzo tutto quello che posso.",
+    workp: "Ogni progetto che realizzo viene pubblicato sul mio server Discord, insieme a build, aggiornamenti e changelog.",
+    inv: "Release, beta e aggiornamenti",
+    join: "Entra",
+    co: "Oltre agli studi, gestisco una mia piccola azienda informatica. Si occupa di tre cose.",
+    s1t: "App Android",
+    s1d: "App su misura per smartphone, pieghevoli e tablet.",
+    s2t: "Infrastruttura",
+    s2d: "Server Proxmox, servizi self-hosted e accesso remoto sicuro.",
+    s3t: "Automazione",
+    s3d: "Script e workflow che eliminano il lavoro ripetitivo.",
+    labp: "Tutto gira su un piccolo server Proxmox a casa, raggiungibile solo tramite una rete privata.",
+    l1: "Hypervisor",
+    l2: "Media",
+    l3: "Musica",
+    l4: "Build",
+    l5: "Accesso remoto",
+    l6: "Backup",
+    l7: "Strumenti",
+    v4: "VM dedicata alle build Android",
+    v6: "Snapshot pianificati",
+    aboutp: "Ho avuto il mio primo PC a dodici anni, l'ho smontato e non ho mai davvero smesso. Ora sono al secondo anno di un diploma biennale in informatica e reti, e passo il resto del tempo a costruire cose che uso davvero.",
+    edu: "Formazione",
+    e1: "BTS CIEL, Informatica e Reti",
+    e1d: "Diploma nazionale di tecnico superiore biennale (Francia). Secondo anno, in corso.",
+    e2: "Baccalauréat STI2D, Sistemi Digitali",
+    e2d: "Indirizzo ingegneria e tecnologia. Superato con ottimi voti.",
+    e3: "Laurea in reti e sicurezza",
+    e3d: "Prevista dopo il BTS.",
+    ms: "Tappe",
+    y1: "Primo PC, primi script",
+    y2: "Ingresso nella community tech su Discord",
+    y3: "Primo homelab Proxmox",
+    y4: "Prima app Android",
+    y5: "Fondazione della mia azienda informatica",
+    cp: "Il modo più rapido per contattarmi è Discord. Progetti, beta e aggiornamenti vengono pubblicati sul mio server.",
+    k1: "Server",
+    k2: "Messaggio diretto",
+    k3: "Codice sorgente",
+    k4: "Post",
+    copy: "Copia",
+    copied: "Copiato",
+    top: "Torna su"
+  },
+  "el": {
+    meta: "Ο Angelo Stackelo φτιάχνει εφαρμογές Android και την υποδομή πάνω στην οποία τρέχουν.",
+    skip: "Μετάβαση στο περιεχόμενο",
+    work: "Έργα",
+    company: "Εταιρεία",
+    lab: "Lab",
+    about: "Σχετικά",
+    contact: "Επικοινωνία",
+    lang: "Γλώσσα",
+    avail: "Ανοιχτός σε συνεργασίες",
+    role: "Προγραμματιστής Android & διαχειριστής συστημάτων",
+    h1: "Φτιάχνω εφαρμογές Android και την υποδομή πάνω στην οποία τρέχουν.",
+    lede: "Είμαι 19, σπουδάζω πληροφορική και δίκτυα και διευθύνω τη δική μου μικρή εταιρεία πληροφορικής. Σχεδιάζω εφαρμογές για μεγάλες οθόνες, φιλοξενώ τους δικούς μου διακομιστές και αυτοματοποιώ ό,τι μπορώ.",
+    workp: "Κάθε έργο που φτιάχνω δημοσιεύεται στον διακομιστή μου στο Discord, μαζί με εκδόσεις, ενημερώσεις και σημειώσεις αλλαγών.",
+    inv: "Εκδόσεις, beta και ενημερώσεις",
+    join: "Συμμετοχή",
+    co: "Παράλληλα με τις σπουδές μου, διευθύνω τη δική μου μικρή εταιρεία πληροφορικής. Εστιάζει σε τρία πράγματα.",
+    s1t: "Εφαρμογές Android",
+    s1d: "Εφαρμογές κατά παραγγελία για κινητά, αναδιπλούμενες συσκευές και tablet.",
+    s2t: "Υποδομή",
+    s2d: "Διακομιστές Proxmox, self-hosted υπηρεσίες και ασφαλής απομακρυσμένη πρόσβαση.",
+    s3t: "Αυτοματισμός",
+    s3d: "Σενάρια και ροές εργασίας που αφαιρούν την επαναλαμβανόμενη δουλειά.",
+    labp: "Όλα τρέχουν σε έναν μικρό διακομιστή Proxmox στο σπίτι, προσβάσιμο μόνο μέσω ιδιωτικού δικτύου.",
+    l1: "Hypervisor",
+    l2: "Πολυμέσα",
+    l3: "Μουσική",
+    l4: "Builds",
+    l5: "Απομακρυσμένη πρόσβαση",
+    l6: "Αντίγραφα ασφαλείας",
+    l7: "Εργαλεία",
+    v4: "Αποκλειστική VM για builds Android",
+    v6: "Προγραμματισμένα στιγμιότυπα",
+    aboutp: "Πήρα τον πρώτο μου υπολογιστή στα δώδεκα, τον διέλυσα και από τότε δεν σταμάτησα ποτέ. Τώρα είμαι στο δεύτερο έτος ενός διετούς προγράμματος πληροφορικής και δικτύων και περνάω τον υπόλοιπο χρόνο μου φτιάχνοντας πράγματα που χρησιμοποιώ πραγματικά.",
+    edu: "Εκπαίδευση",
+    e1: "BTS CIEL, Πληροφορική & Δίκτυα",
+    e1d: "Διετές εθνικό δίπλωμα ανώτερου τεχνικού (Γαλλία). Δεύτερο έτος, σε εξέλιξη.",
+    e2: "Baccalauréat STI2D, Ψηφιακά Συστήματα",
+    e2d: "Κατεύθυνση μηχανικής και τεχνολογίας. Με διάκριση.",
+    e3: "Πτυχίο δικτύων & ασφάλειας",
+    e3d: "Προγραμματίζεται μετά το BTS.",
+    ms: "Ορόσημα",
+    y1: "Πρώτος υπολογιστής, πρώτα scripts",
+    y2: "Μπήκα στην τεχνολογική κοινότητα του Discord",
+    y3: "Πρώτο homelab με Proxmox",
+    y4: "Πρώτη εφαρμογή Android",
+    y5: "Ίδρυση της δικής μου εταιρείας πληροφορικής",
+    cp: "Ο πιο γρήγορος τρόπος να με βρεις είναι το Discord. Έργα, beta και ενημερώσεις δημοσιεύονται όλα στον διακομιστή μου.",
+    k1: "Διακομιστής",
+    k2: "Προσωπικό μήνυμα",
+    k3: "Πηγαίος κώδικας",
+    k4: "Δημοσιεύσεις",
+    copy: "Αντιγραφή",
+    copied: "Αντιγράφηκε",
+    top: "Επιστροφή στην κορυφή"
+  },
+  "ml": {
+    meta: "Android ആപ്പുകളും അവ പ്രവർത്തിക്കുന്ന ഇൻഫ്രാസ്ട്രക്ചറും നിർമ്മിക്കുന്നയാളാണ് Angelo Stackelo.",
+    skip: "ഉള്ളടക്കത്തിലേക്ക് പോകുക",
+    work: "പ്രോജക്റ്റുകൾ",
+    company: "കമ്പനി",
+    lab: "ലാബ്",
+    about: "എന്നെക്കുറിച്ച്",
+    contact: "ബന്ധപ്പെടുക",
+    lang: "ഭാഷ",
+    avail: "സഹകരണങ്ങൾക്ക് തയ്യാർ",
+    role: "Android ഡെവലപ്പറും സിസ്റ്റം അഡ്മിനും",
+    h1: "ഞാൻ Android ആപ്പുകളും അവ പ്രവർത്തിക്കുന്ന ഇൻഫ്രാസ്ട്രക്ചറും നിർമ്മിക്കുന്നു.",
+    lede: "എനിക്ക് 19 വയസ്സ്, ഐടിയും നെറ്റ്‌വർക്കിംഗും പഠിക്കുന്നു, ഒപ്പം സ്വന്തമായി ഒരു ചെറിയ ഐടി കമ്പനി നടത്തുന്നു. വലിയ സ്ക്രീനുകൾക്കായി ആപ്പുകൾ ഡിസൈൻ ചെയ്യുന്നു, സ്വന്തം സെർവറുകൾ ഹോസ്റ്റ് ചെയ്യുന്നു, കഴിയുന്നതെല്ലാം ഓട്ടോമേറ്റ് ചെയ്യുന്നു.",
+    workp: "ഞാൻ നിർമ്മിക്കുന്ന എല്ലാ പ്രോജക്റ്റുകളും ബിൽഡുകൾ, അപ്ഡേറ്റുകൾ, ചേഞ്ച്‌ലോഗുകൾ എന്നിവയോടൊപ്പം എന്റെ Discord സെർവറിൽ പുറത്തിറക്കുന്നു.",
+    inv: "റിലീസുകൾ, ബീറ്റകൾ, അപ്ഡേറ്റുകൾ",
+    join: "ചേരുക",
+    co: "പഠനത്തോടൊപ്പം ഞാൻ സ്വന്തമായി ഒരു ചെറിയ ഐടി കമ്പനി നടത്തുന്നു. അത് മൂന്ന് കാര്യങ്ങളിൽ ശ്രദ്ധിക്കുന്നു.",
+    s1t: "Android ആപ്പുകൾ",
+    s1d: "ഫോണുകൾ, ഫോൾഡബിളുകൾ, ടാബ്‌ലെറ്റുകൾ എന്നിവയ്ക്കുള്ള കസ്റ്റം ആപ്പുകൾ.",
+    s2t: "ഇൻഫ്രാസ്ട്രക്ചർ",
+    s2d: "Proxmox സെർവറുകൾ, സെൽഫ്-ഹോസ്റ്റഡ് സേവനങ്ങൾ, സുരക്ഷിതമായ റിമോട്ട് ആക്സസ്.",
+    s3t: "ഓട്ടോമേഷൻ",
+    s3d: "ആവർത്തിക്കുന്ന ജോലികൾ ഒഴിവാക്കുന്ന സ്ക്രിപ്റ്റുകളും വർക്ക്ഫ്ലോകളും.",
+    labp: "എല്ലാം വീട്ടിലെ ഒരു ചെറിയ Proxmox സെർവറിലാണ് പ്രവർത്തിക്കുന്നത്, ഒരു സ്വകാര്യ നെറ്റ്‌വർക്കിലൂടെ മാത്രമേ ആക്സസ് ചെയ്യാനാകൂ.",
+    l1: "ഹൈപ്പർവൈസർ",
+    l2: "മീഡിയ",
+    l3: "സംഗീതം",
+    l4: "ബിൽഡുകൾ",
+    l5: "റിമോട്ട് ആക്സസ്",
+    l6: "ബാക്കപ്പുകൾ",
+    l7: "ടൂളുകൾ",
+    v4: "Android ബിൽഡുകൾക്കായുള്ള പ്രത്യേക VM",
+    v6: "ഷെഡ്യൂൾ ചെയ്ത സ്നാപ്ഷോട്ടുകൾ",
+    aboutp: "പന്ത്രണ്ടാം വയസ്സിൽ ആദ്യ PC കിട്ടി, ഉടനെ അത് അഴിച്ചുപണിതു, അതിനുശേഷം ഞാൻ നിർത്തിയിട്ടില്ല. ഇപ്പോൾ രണ്ടുവർഷത്തെ ഐടി, നെറ്റ്‌വർക്ക് കോഴ്സിന്റെ രണ്ടാം വർഷത്തിലാണ്, ബാക്കി സമയം ഞാൻ ശരിക്കും ഉപയോഗിക്കുന്ന കാര്യങ്ങൾ നിർമ്മിക്കാൻ ചെലവഴിക്കുന്നു.",
+    edu: "വിദ്യാഭ്യാസം",
+    e1: "BTS CIEL, ഐടി & നെറ്റ്‌വർക്കുകൾ",
+    e1d: "ഫ്രാൻസിലെ രണ്ടുവർഷത്തെ ദേശീയ ഹയർ ടെക്നീഷ്യൻ ഡിപ്ലോമ. രണ്ടാം വർഷം, പുരോഗമിക്കുന്നു.",
+    e2: "Baccalauréat STI2D, ഡിജിറ്റൽ സിസ്റ്റംസ്",
+    e2d: "എഞ്ചിനീയറിംഗ്, ടെക്നോളജി സ്ട്രീം. ഉയർന്ന മാർക്കോടെ വിജയിച്ചു.",
+    e3: "നെറ്റ്‌വർക്ക് & സുരക്ഷയിൽ ബിരുദം",
+    e3d: "BTS-ന് ശേഷം പദ്ധതിയിടുന്നു.",
+    ms: "നാഴികക്കല്ലുകൾ",
+    y1: "ആദ്യ PC, ആദ്യ സ്ക്രിപ്റ്റുകൾ",
+    y2: "Discord-ലെ ടെക് കമ്മ്യൂണിറ്റിയിൽ ചേർന്നു",
+    y3: "ആദ്യ Proxmox ഹോംലാബ്",
+    y4: "ആദ്യ Android ആപ്പ്",
+    y5: "സ്വന്തം ഐടി കമ്പനി ആരംഭിച്ചു",
+    cp: "എന്നെ ബന്ധപ്പെടാനുള്ള ഏറ്റവും വേഗമേറിയ വഴി Discord ആണ്. പ്രോജക്റ്റുകളും ബീറ്റകളും അപ്ഡേറ്റുകളും എല്ലാം എന്റെ സെർവറിൽ പോസ്റ്റ് ചെയ്യുന്നു.",
+    k1: "സെർവർ",
+    k2: "നേരിട്ടുള്ള സന്ദേശം",
+    k3: "സോഴ്സ് കോഡ്",
+    k4: "പോസ്റ്റുകൾ",
+    copy: "പകർത്തുക",
+    copied: "പകർത്തി",
+    top: "മുകളിലേക്ക്"
+  },
+  "ur-Latn": {
+    meta: "Angelo Stackelo Android apps aur un ka infrastructure banata hai.",
+    skip: "Content par jayen",
+    work: "Kaam",
+    company: "Company",
+    lab: "Lab",
+    about: "Mere baare mein",
+    contact: "Rabta",
+    lang: "Zabaan",
+    avail: "Collaboration ke liye available",
+    role: "Android developer aur sysadmin",
+    h1: "Main Android apps aur woh infrastructure banata hoon jis par woh chalti hain.",
+    lede: "Main 19 saal ka hoon, IT aur networks parh raha hoon, aur apni ek chhoti IT company chalata hoon. Main bari screens ke liye apps design karta hoon, apne server khud host karta hoon aur jo kuch ho sake automate karta hoon.",
+    workp: "Mera har project mere Discord server par release hota hai, builds, updates aur changelogs ke saath.",
+    inv: "Releases, betas aur updates",
+    join: "Join karein",
+    co: "Parhai ke saath saath main apni ek chhoti IT company chalata hoon. Woh teen cheezon par focus karti hai.",
+    s1t: "Android apps",
+    s1d: "Phones, foldables aur tablets ke liye custom apps.",
+    s2t: "Infrastructure",
+    s2d: "Proxmox servers, self-hosted services aur mehfooz remote access.",
+    s3t: "Automation",
+    s3d: "Scripts aur workflows jo baar baar ka kaam khatam kar dete hain.",
+    labp: "Sab kuch ghar par ek chhote Proxmox server par chalta hai, jise sirf private network ke zariye access kiya ja sakta hai.",
+    l1: "Hypervisor",
+    l2: "Media",
+    l3: "Music",
+    l4: "Builds",
+    l5: "Remote access",
+    l6: "Backups",
+    l7: "Tools",
+    v4: "Android builds ke liye alag VM",
+    v6: "Scheduled snapshots",
+    aboutp: "Bara saal ki umar mein pehla PC mila, foran use khol diya, aur tab se kabhi ruka nahi. Abhi main IT aur networks ke do saala course ke doosre saal mein hoon, aur baqi waqt woh cheezein banata hoon jo main sach mein use karta hoon.",
+    edu: "Taleem",
+    e1: "BTS CIEL, IT aur Networks",
+    e1d: "France ka do saala national higher technician diploma. Doosra saal, jaari hai.",
+    e2: "Baccalauréat STI2D, Digital Systems",
+    e2d: "Engineering aur technology track. Achhe numbron se pass.",
+    e3: "Networks aur security mein bachelor's",
+    e3d: "BTS ke baad ka plan.",
+    ms: "Ahem marahil",
+    y1: "Pehla PC, pehle scripts",
+    y2: "Discord par tech community join ki",
+    y3: "Pehla Proxmox homelab",
+    y4: "Pehli Android app",
+    y5: "Apni IT company shuru ki",
+    cp: "Mujh se rabta karne ka sab se tez tareeqa Discord hai. Projects, betas aur updates sab mere server par post hote hain.",
+    k1: "Server",
+    k2: "Direct message",
+    k3: "Source code",
+    k4: "Posts",
+    copy: "Copy",
+    copied: "Copy ho gaya",
+    top: "Upar jayen"
+  },
+  "ro": {
+    meta: "Angelo Stackelo dezvoltă aplicații Android și infrastructura pe care rulează.",
+    skip: "Salt la conținut",
+    work: "Proiecte",
+    company: "Companie",
+    lab: "Lab",
+    about: "Despre",
+    contact: "Contact",
+    lang: "Limbă",
+    avail: "Deschis la colaborări",
+    role: "Dezvoltator Android & sysadmin",
+    h1: "Dezvolt aplicații Android și infrastructura pe care rulează.",
+    lede: "Am 19 ani, studiez IT și rețele și conduc propria mea mică firmă de IT. Creez aplicații pentru ecrane mari, îmi găzduiesc propriile servere și automatizez tot ce pot.",
+    workp: "Fiecare proiect pe care îl construiesc este publicat pe serverul meu de Discord, împreună cu versiuni, actualizări și changelog-uri.",
+    inv: "Lansări, versiuni beta și actualizări",
+    join: "Alătură-te",
+    co: "Pe lângă studii, conduc propria mea mică firmă de IT. Se concentrează pe trei lucruri.",
+    s1t: "Aplicații Android",
+    s1d: "Aplicații personalizate pentru telefoane, pliabile și tablete.",
+    s2t: "Infrastructură",
+    s2d: "Servere Proxmox, servicii self-hosted și acces la distanță securizat.",
+    s3t: "Automatizare",
+    s3d: "Scripturi și fluxuri care elimină munca repetitivă.",
+    labp: "Totul rulează pe un mic server Proxmox acasă, accesibil doar printr-o rețea privată.",
+    l1: "Hipervizor",
+    l2: "Media",
+    l3: "Muzică",
+    l4: "Build-uri",
+    l5: "Acces la distanță",
+    l6: "Backup-uri",
+    l7: "Unelte",
+    v4: "VM dedicată build-urilor Android",
+    v6: "Snapshot-uri programate",
+    aboutp: "Am primit primul PC la doisprezece ani, l-am desfăcut și de atunci nu m-am mai oprit. Acum sunt în anul al doilea al unui program de doi ani în IT și rețele, iar restul timpului îl petrec construind lucruri pe care chiar le folosesc.",
+    edu: "Educație",
+    e1: "BTS CIEL, IT și Rețele",
+    e1d: "Diplomă națională de tehnician superior, doi ani (Franța). Anul al doilea, în desfășurare.",
+    e2: "Baccalauréat STI2D, Sisteme Digitale",
+    e2d: "Profil de inginerie și tehnologie. Promovat cu distincție.",
+    e3: "Licență în rețele și securitate",
+    e3d: "Planificată după BTS.",
+    ms: "Repere",
+    y1: "Primul PC, primele scripturi",
+    y2: "Intrarea în comunitatea tech pe Discord",
+    y3: "Primul homelab Proxmox",
+    y4: "Prima aplicație Android",
+    y5: "Fondarea propriei firme de IT",
+    cp: "Cel mai rapid mă găsești pe Discord. Proiectele, versiunile beta și actualizările sunt publicate pe serverul meu.",
+    k1: "Server",
+    k2: "Mesaj direct",
+    k3: "Cod sursă",
+    k4: "Postări",
+    copy: "Copiază",
+    copied: "Copiat",
+    top: "Înapoi sus"
+  }
+};
+// end i18n
+
+(function () {
+  "use strict";
+
+  var LANGS = [
+    ["en", "English", "EN"],
+    ["zh-CN", "简体中文", "ZH"],
+    ["zh-TW", "繁體中文", "ZH-TW"],
+    ["ja", "日本語", "JA"],
+    ["ko", "한국어", "KO"],
+    ["tr", "Türkçe", "TR"],
+    ["ru", "Русский", "RU"],
+    ["vi", "Tiếng Việt", "VI"],
+    ["th", "ไทย", "TH"],
+    ["de", "Deutsch", "DE"],
+    ["es", "Español", "ES"],
+    ["fr", "Français", "FR"],
+    ["uk", "Українська", "UK"],
+    ["pl", "Polski", "PL"],
+    ["pt-BR", "Português (Brasil)", "PT-BR"],
+    ["ar", "العربية", "AR"],
+    ["fa", "فارسی", "FA"],
+    ["id", "Bahasa Indonesia", "ID"],
+    ["it", "Italiano", "IT"],
+    ["el", "Ελληνικά", "EL"],
+    ["ml", "മലയാളം", "ML"],
+    ["ur-Latn", "Roman Urdu", "UR"],
+    ["ro", "Română", "RO"]
+  ];
+  var RTL = { ar: 1, fa: 1 };
+  var CHECK = '<svg class="ck" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  var root = document.documentElement;
+  var box = document.getElementById("lang");
+  var btn = document.getElementById("lang-btn");
+  var curEl = document.getElementById("lang-cur");
+  var list = document.getElementById("lang-list");
+  var nodes = document.querySelectorAll("[data-t]");
+  var metaDesc = document.querySelector('meta[name="description"]');
+  var current = "en";
+  var opts = [];
+
+  /* build the menu */
+  LANGS.forEach(function (l) {
+    var li = document.createElement("li");
+    li.id = "opt-" + l[0];
+    li.setAttribute("role", "option");
+    li.setAttribute("aria-selected", "false");
+    li.tabIndex = -1;
+    li.dataset.v = l[0];
+
+    var nm = document.createElement("span");
+    nm.className = "nm";
+    nm.lang = l[0];
+    nm.textContent = l[1];
+
+    var cd = document.createElement("span");
+    cd.className = "cd";
+    cd.textContent = l[2];
+
+    li.appendChild(nm);
+    li.appendChild(cd);
+    li.insertAdjacentHTML("beforeend", CHECK);
+    list.appendChild(li);
+    opts.push(li);
+  });
+  document.getElementById("lang-count").textContent = LANGS.length;
+
+  function nameOf(code) {
+    for (var i = 0; i < LANGS.length; i++) if (LANGS[i][0] === code) return LANGS[i][1];
+    return code;
+  }
+
+  function stored(value) {
+    try {
+      if (value === undefined) return localStorage.getItem("lang");
+      localStorage.setItem("lang", value);
+    } catch (e) { return null; }
+  }
+
+  function match(tag) {
+    if (!tag) return null;
+    var t = String(tag).toLowerCase();
+    for (var k in I18N) if (k.toLowerCase() === t) return k;
+    return I18N[t.split("-")[0]] ? t.split("-")[0] : null;
+  }
+
+  /* English unless the visitor picked something (or the link says so) */
+  function initial() {
+    var q = null;
+    try { q = new URLSearchParams(location.search).get("lang"); } catch (e) {}
+    return match(q) || match(stored()) || "en";
+  }
+
+  function t(key) {
+    var d = I18N[current];
+    return (d && d[key]) || I18N.en[key] || "";
+  }
+
+  function apply(lang, persist) {
+    current = I18N[lang] ? lang : "en";
+    for (var i = 0; i < nodes.length; i++) {
+      var text = t(nodes[i].getAttribute("data-t"));
+      if (text) nodes[i].textContent = text;
+    }
+    root.lang = current;
+    root.dir = RTL[current] ? "rtl" : "ltr";
+    if (metaDesc) metaDesc.setAttribute("content", t("meta"));
+
+    curEl.textContent = nameOf(current);
+    btn.setAttribute("aria-label", t("lang") + ": " + nameOf(current));
+    opts.forEach(function (o) { o.setAttribute("aria-selected", o.dataset.v === current ? "true" : "false"); });
+
+    if (persist) {
+      stored(current);
+      try {
+        var url = new URL(location.href);
+        if (current === "en") url.searchParams.delete("lang");
+        else url.searchParams.set("lang", current);
+        history.replaceState(null, "", url);
+      } catch (e) {}
+    }
+  }
+
+  /* open / close */
+  function isOpen() { return box.hasAttribute("data-open"); }
+
+  function focusAt(i) {
+    var n = opts.length;
+    var o = opts[((i % n) + n) % n];
+    o.focus({ preventScroll: true });
+    o.scrollIntoView({ block: "nearest" });
+  }
+
+  function openMenu() {
+    if (isOpen()) return;
+    box.setAttribute("data-open", "");
+    btn.setAttribute("aria-expanded", "true");
+    document.addEventListener("pointerdown", onOutside, true);
+    var sel = document.getElementById("opt-" + current);
+    requestAnimationFrame(function () { focusAt(opts.indexOf(sel)); });
+  }
+
+  function closeMenu(returnFocus) {
+    if (!isOpen()) return;
+    box.removeAttribute("data-open");
+    btn.setAttribute("aria-expanded", "false");
+    document.removeEventListener("pointerdown", onOutside, true);
+    if (returnFocus) btn.focus();
+  }
+
+  function onOutside(e) { if (!box.contains(e.target)) closeMenu(false); }
+
+  function choose(code) {
+    apply(code, true);
+    closeMenu(true);
+  }
+
+  btn.addEventListener("click", function () { isOpen() ? closeMenu(false) : openMenu(); });
+  btn.addEventListener("keydown", function (e) {
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); openMenu(); }
+  });
+
+  list.addEventListener("click", function (e) {
+    var li = e.target.closest('[role="option"]');
+    if (li) choose(li.dataset.v);
+  });
+
+  var typed = "", typedAt = 0;
+  list.addEventListener("keydown", function (e) {
+    var i = opts.indexOf(document.activeElement);
+    var fwd = root.dir === "rtl" ? "ArrowLeft" : "ArrowRight";
+    var back = root.dir === "rtl" ? "ArrowRight" : "ArrowLeft";
+    switch (e.key) {
+      case "ArrowDown": case fwd: e.preventDefault(); focusAt(i + 1); return;
+      case "ArrowUp": case back: e.preventDefault(); focusAt(i - 1); return;
+      case "Home": e.preventDefault(); focusAt(0); return;
+      case "End": e.preventDefault(); focusAt(opts.length - 1); return;
+      case "Enter": case " ": e.preventDefault(); if (i > -1) choose(opts[i].dataset.v); return;
+      case "Escape": e.preventDefault(); closeMenu(true); return;
+      case "Tab": closeMenu(false); return;
+    }
+    if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      var now = Date.now();
+      typed = now - typedAt > 600 ? e.key.toLowerCase() : typed + e.key.toLowerCase();
+      typedAt = now;
+      for (var k = 1; k <= opts.length; k++) {
+        var j = (i + k) % opts.length;
+        if (nameOf(opts[j].dataset.v).toLowerCase().indexOf(typed) === 0) { focusAt(j); break; }
+      }
+    }
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && isOpen()) closeMenu(true);
+  });
+
+  apply(initial(), false);
+
+  /* header hairline once the page scrolls */
+  var header = document.querySelector(".hd");
+  var ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () {
+      header.classList.toggle("is-stuck", window.scrollY > 8);
+      ticking = false;
+    });
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  /* current section in nav */
+  var links = document.querySelectorAll(".nav a");
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        links.forEach(function (a) {
+          a.setAttribute("aria-current", a.getAttribute("href") === "#" + e.target.id ? "true" : "false");
+        });
+      });
+    }, { rootMargin: "-45% 0px -50% 0px" });
+    document.querySelectorAll("section[id]").forEach(function (s) { io.observe(s); });
+  }
+
+  /* copy handle */
+  document.querySelectorAll(".copy").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var value = b.getAttribute("data-copy");
+      var done = function () {
+        b.textContent = t("copied");
+        b.setAttribute("data-done", "");
+        setTimeout(function () {
+          b.textContent = t("copy");
+          b.removeAttribute("data-done");
+        }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(value).then(done, function () {});
+      }
+    });
+  });
+
+  document.getElementById("yr").textContent = new Date().getFullYear();
+})();
+</script>
+</body>
+</html>
